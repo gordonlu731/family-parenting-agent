@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY, applied_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS families (id TEXT PRIMARY KEY, name TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS members (id TEXT PRIMARY KEY, family_id TEXT NOT NULL REFERENCES families(id), name TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('owner','caregiver')), active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY, member_id TEXT NOT NULL REFERENCES members(id), csrf TEXT NOT NULL, expires INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS invites (token_hash TEXT PRIMARY KEY, family_id TEXT NOT NULL REFERENCES families(id), member_id TEXT REFERENCES members(id), expires INTEGER NOT NULL, used_at TEXT, created_by TEXT NOT NULL REFERENCES members(id));
+CREATE TABLE IF NOT EXISTS profiles (family_id TEXT PRIMARY KEY REFERENCES families(id), data TEXT NOT NULL, version INTEGER NOT NULL DEFAULT 1, updated_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS records (id TEXT PRIMARY KEY, family_id TEXT NOT NULL REFERENCES families(id), member_id TEXT NOT NULL REFERENCES members(id), day TEXT NOT NULL, meal TEXT NOT NULL, items TEXT NOT NULL, note TEXT NOT NULL, version INTEGER NOT NULL DEFAULT 1, deleted INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS records_family_day ON records(family_id,day);
+CREATE TABLE IF NOT EXISTS menus (id TEXT PRIMARY KEY, family_id TEXT NOT NULL REFERENCES families(id), day TEXT NOT NULL, meal TEXT NOT NULL, title TEXT NOT NULL, ingredients TEXT NOT NULL, method TEXT NOT NULL, note TEXT NOT NULL, version INTEGER NOT NULL DEFAULT 1, updated_by TEXT NOT NULL REFERENCES members(id), updated_at TEXT NOT NULL, UNIQUE(family_id,day,meal));
+CREATE TABLE IF NOT EXISTS idempotency (family_id TEXT NOT NULL, member_id TEXT NOT NULL, request_key TEXT NOT NULL, operation TEXT NOT NULL, fingerprint TEXT NOT NULL, result TEXT NOT NULL, PRIMARY KEY(member_id,request_key));
+CREATE TABLE IF NOT EXISTS audit (id TEXT PRIMARY KEY, family_id TEXT NOT NULL, member_id TEXT NOT NULL, entity TEXT NOT NULL, entity_id TEXT NOT NULL, action TEXT NOT NULL, before_data TEXT, after_data TEXT, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS messages (id TEXT PRIMARY KEY, family_id TEXT NOT NULL, member_id TEXT NOT NULL, role TEXT NOT NULL, content TEXT NOT NULL, created_at TEXT NOT NULL);
+INSERT OR IGNORE INTO schema_migrations VALUES (1, CURRENT_TIMESTAMP);
