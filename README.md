@@ -44,6 +44,10 @@ npm run dev
 
 邀请链接中的令牌放在URL片段，避免出现在普通HTTP请求日志中。每个邀请单次有效、24小时过期。新设备重新加入需要管理员新发邀请，不能只凭昵称获取身份。管理员若需要退出，先保存自己的重新登录链接。
 
+## 自动验证与后续接入
+
+GitHub Verify在main推送、PR或手工触发时构建并运行模拟后台测试。统一入口为bash scripts/verify.sh，不调用真实模型或连接ECS。模型场景验收清单见evals/README.md，自动执行链路接入要求见docs/AUTOMATION_HANDOFF.md。当前ECS手动部署暂停，等待自动链路准备完成。
+
 ## 构建与验证
 
 ```bash

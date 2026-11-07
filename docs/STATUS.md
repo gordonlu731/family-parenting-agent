@@ -45,3 +45,11 @@
 维护者明确选择公开源码，目标仓库为https://github.com/gordonlu731/family-parenting-agent。仓库确认仅有初始化README，本批次准备导入完整0.2.1源码及开发说明。具体远程提交以GitHub记录为准。AGENTS.md记录后续开发约定，REPOSITORY.md记录安装和验收命令。
 
 公开导入排除.env、运行数据库、备份、录音、家庭导出、node_modules和dist。原始计划中的真实家庭历史不进入公开文档。真实模型、ECS部署、浏览器视觉和微信真机验收仍未完成。
+
+## 无ECS依赖的准备（2026年11月7日）
+
+新增统一验证入口scripts/verify.sh、GitHub Verify工作流、20条虚构模型验收场景及AUTOMATION_HANDOFF.md。工作流只构建和跑模拟测试，不连接ECS或调用真实模型。20条场景尚未真实执行。
+
+当前环境提供Chromium和Playwright，因此尝试了自动浏览器验证；应用在临时虚构数据库上启动成功，但Chromium创建进程单例socket被运行环境以Operation not permitted拒绝。浏览器未打开页面，视觉及交互验收仍未完成；未变更权限或网络来绕过限制。
+
+按维护者决定暂停ECS手动安装和部署，等待外部自动执行链路。自动部署触发和回执仍未接入本仓库。

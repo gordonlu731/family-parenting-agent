@@ -26,3 +26,9 @@
 模型输出有Schema和明确食材名称校验，仍需家长核实语义、过敏配料和食材处理，不能视为医学或营养认证。测试通过不表示产品已正式上线，也不表示语音聊天已经完成。
 
 运行时有Starlette对测试客户端使用httpx的弃用提示，未导致失败；生产代码的供应商HTTP调用仍使用httpx。未来升级测试依赖时需复核兼容性。
+
+## 2026年11月7日准备验证
+
+统一入口bash scripts/verify.sh在当前工作区运行：TypeScript/Vite构建及48项后台测试通过。新增CI使用同一入口，其远程运行结果以GitHub Actions记录为准。20条模型验收用例仅已准备，全部标为not_run。
+
+Playwright尝试失败于Chromium启动阶段：process_singleton_posix.cc报socket() failed: Operation not permitted。应用本身在临时数据库上启动成功，没有获得页面截图或交互结果。未做微信真机验收。
