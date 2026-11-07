@@ -1,6 +1,6 @@
 # Family parenting assistant
 
-One household, one child. Current baseline: 0.2.1. Read README.md and docs/STATUS.md before changing behavior; docs/HANDOFF.md lists pending work.
+One household, one child. Current baseline: 0.2.2. Read README.md and docs/STATUS.md before changing behavior; docs/HANDOFF.md lists pending work.
 
 ## Development
 

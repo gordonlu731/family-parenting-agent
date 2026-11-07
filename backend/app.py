@@ -94,7 +94,11 @@ class Bootstrap(StrictModel):
 
 class Join(StrictModel):
     token: str = Field(min_length=32, max_length=256)
-    name: str = Field(min_length=1, max_length=24)
+    name: str = Field(default='', max_length=24)
+
+
+class InvitePreview(StrictModel):
+    token: str = Field(min_length=32, max_length=256)
 
 
 class Invite(StrictModel):
@@ -289,7 +293,7 @@ def create_app():
             if request.headers.get('content-type', '').split(';')[0] != 'application/json':
                 return JSONResponse({'detail': {'message': '请使用页面提供的操作入口'}}, status_code=415)
             ip = request.client.host if request.client else 'unknown'
-            is_auth = request.url.path in ('/api/bootstrap', '/api/join', '/api/demo')
+            is_auth = request.url.path in ('/api/bootstrap', '/api/join', '/api/demo', '/api/invite-preview')
             bucket = (ip, 'auth' if is_auth else 'write')
             q = limits[bucket]
             while q and q[0] < time.monotonic() - 60:
@@ -342,6 +346,20 @@ def create_app():
             db.execute('INSERT INTO records VALUES (?,?,?,?,?,?,?,1,0,?,?)', (uid(), fid, mid, today, '早餐', encoded([{'food': '南瓜小米粥', 'amount': '半碗', 'acceptance': '吃了'}]), '虚构的演示进食记录', now(), now()))
             return s
 
+    @app.post('/api/invite-preview')
+    def invite_preview(data: InvitePreview):
+        with database() as db:
+            inv = db.execute('SELECT * FROM invites WHERE token_hash=? AND used_at IS NULL AND expires>?', (digest(data.token), int(time.time()))).fetchone()
+            if not inv:
+                error(403, '链接已过期或已使用，请联系家庭管理员重新发送登录邀请')
+            target = None
+            if inv['member_id']:
+                target = db.execute('SELECT name FROM members WHERE id=? AND family_id=? AND active=1', (inv['member_id'], inv['family_id'])).fetchone()
+                if not target:
+                    error(403, '该成员已停用')
+            family = db.execute('SELECT name FROM families WHERE id=?', (inv['family_id'],)).fetchone()
+            return {'family_name': family['name'], 'member_name': target['name'] if target else None, 'kind': 'login' if target else 'join'}
+
     @app.post('/api/join')
     def join(data: Join, response: Response):
         with database(True) as db:
@@ -354,6 +372,8 @@ def create_app():
                     error(403, '该成员已停用')
                 mid = existing['id']
             else:
+                if not data.name:
+                    error(422, '请填写家人熟悉的称呼')
                 mid = uid()
                 db.execute('INSERT INTO members VALUES (?,?,?,?,1,?)', (mid, inv['family_id'], data.name, 'caregiver', now()))
             db.execute('UPDATE invites SET used_at=? WHERE token_hash=?', (now(), digest(data.token)))

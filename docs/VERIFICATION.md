@@ -32,3 +32,9 @@
 统一入口bash scripts/verify.sh在当前工作区运行：TypeScript/Vite构建及48项后台测试通过。新增CI使用同一入口，其远程运行结果以GitHub Actions记录为准。20条模型验收用例仅已准备，全部标为not_run。
 
 Playwright尝试失败于Chromium启动阶段：process_singleton_posix.cc报socket() failed: Operation not permitted。应用本身在临时数据库上启动成功，没有获得页面截图或交互结果。未做微信真机验收。
+
+## 0.2.2 登录验收（2026年11月7日）
+
+TypeScript/Vite构建通过；后台共53项测试通过，包含新增5项：持有原Cookie直接访问统一入口身份保持、恢复预览不消费邀请且登录后原ID/称呼/进食历史保留、新成员必须填写称呼且预览最小化、停用后恢复邀请失效、过期及跨来源预览拒绝。无需真实模型或ECS。
+
+没有获得新的浏览器权限恢复证据，页面视觉及微信真机验收仍待完成。
