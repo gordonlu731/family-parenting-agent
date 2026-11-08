@@ -216,3 +216,44 @@ class WorkflowTest(unittest.TestCase):
         self.assertIsNotNone(mod.create_app())
         with mod.database() as db:
             self.assertEqual([r[0] for r in db.execute('SELECT version FROM schema_migrations ORDER BY version')],[1,2])
+
+    def test_single_replacement_preserves_other_meals_and_updates_shopping(self):
+        self.confirm_profile()
+        self.confirm(self.generate().json())
+        self.owner.put('/api/menus',json=self.menu_payload(meal='晚餐',title='晚餐保留',ingredients=['面条']),headers={'Idempotency-Key':'keep-dinner'})
+        output=self.menu();output['meals'][0].update(title='南瓜软饭',ingredients=[{'name':'南瓜','quantity':'30','unit':'克'}])
+        with provider(json.dumps(output,ensure_ascii=False)) as calls:
+            r=self.owner.post('/api/menu-proposals',json={'start':DAY,'days':1,'meals':['午餐'],'replace':True,'instructions':'换成南瓜'})
+        self.assertEqual(r.status_code,200,r.text)
+        context=json.loads(calls[0]['messages'][1]['content'])
+        self.assertEqual(context['replacing_menu']['title'],'蔬菜软饭')
+        self.assertNotIn('id',context['replacing_menu'])
+        menus=self.owner.get(f'/api/menus?start={DAY}&end={DAY}').json()
+        self.assertEqual(next(m for m in menus if m['meal']=='午餐')['title'],'蔬菜软饭')
+        # A change outside the target slot must remain intact.
+        self.owner.put('/api/menus',json=self.menu_payload(meal='晚餐',title='晚餐手工更新',ingredients=['面条'],version=1),headers={'Idempotency-Key':'update-dinner'})
+        self.assertEqual(self.confirm(r.json()).status_code,200)
+        menus=self.owner.get(f'/api/menus?start={DAY}&end={DAY}').json()
+        self.assertEqual({m['meal']:m['title'] for m in menus},{'午餐':'南瓜软饭','晚餐':'晚餐手工更新'})
+        shopping=self.owner.get(f'/api/shopping?start={DAY}&end={DAY}').json()['items']
+        self.assertEqual({i['name'] for i in shopping},{'南瓜','面条'})
+        self.assertEqual(Decimal(next(i for i in shopping if i['name']=='南瓜')['quantity']),30)
+
+    def test_replacement_requires_one_existing_slot_before_provider(self):
+        self.confirm_profile()
+        with provider(json.dumps(self.menu())) as calls:
+            for days,meals in [(2,['午餐']),(1,['午餐','晚餐'])]:
+                r=self.owner.post('/api/menu-proposals',json={'start':DAY,'days':days,'meals':meals,'replace':True})
+                self.assertEqual(r.status_code,422)
+            self.assertEqual(self.owner.post('/api/menu-proposals',json={'start':DAY,'days':1,'meals':['午餐'],'replace':True}).status_code,409)
+        self.assertEqual(calls,[])
+
+    def test_replacement_cannot_publish_if_target_changed(self):
+        self.confirm_profile()
+        self.confirm(self.generate().json())
+        with provider(json.dumps(self.menu())):
+            r=self.owner.post('/api/menu-proposals',json={'start':DAY,'days':1,'meals':['午餐'],'replace':True})
+        self.assertEqual(r.status_code,200,r.text)
+        self.owner.put('/api/menus',json=self.menu_payload(title='家人已调整',version=1),headers={'Idempotency-Key':'new-lunch'})
+        self.assertEqual(self.confirm(r.json()).status_code,409)
+        self.assertEqual(self.owner.get(f'/api/menus?start={DAY}&end={DAY}').json()[0]['title'],'家人已调整')
