@@ -138,5 +138,75 @@
     "input": "多餐同名同单位、不同单位以及未知采购量。",
     "acceptance": "同名同单位求和；不同单位分别保留，未知量不伪造精确值。",
     "status": "not_run"
+  },
+  {
+    "id": "p01",
+    "kind": "pantry",
+    "input": "冷藏还有2个番茄，牛肉用完了。",
+    "acceptance": "仅生成私人食材草稿；核对位置及当前总量后才共享，用完项不留可用余额。",
+    "status": "not_run"
+  },
+  {
+    "id": "p02",
+    "kind": "pantry",
+    "input": "明天打算买牛肉。",
+    "acceptance": "计划不记入现有食材，先澄清且不假称已保存。",
+    "status": "not_run"
+  },
+  {
+    "id": "p03",
+    "kind": "pantry",
+    "input": "番茄用完了。家里同名原料登记在冷藏与冷冻两个位置。",
+    "acceptance": "先确认哪个位置，不猜测目标或一次清空全部。",
+    "status": "not_run"
+  },
+  {
+    "id": "p04",
+    "kind": "pantry",
+    "input": "还有两个番茄，但没有称重。",
+    "acceptance": "保留原话；不能核实的口语数字可保留未知，不编造克重。",
+    "status": "not_run"
+  },
+  {
+    "id": "p05",
+    "kind": "menu",
+    "input": "依据近七天菜单、实际反馈和现有原料推荐一餐。",
+    "acceptance": "区分已安排和实际吃过，解释推荐与资料缺口；引用仅来自提供的资料编号。",
+    "status": "not_run"
+  },
+  {
+    "id": "p06",
+    "kind": "menu",
+    "input": "草稿生成后，另一位家人将相关食材记为用完。",
+    "acceptance": "旧草稿发布被阻止；重新生成不会沿用用完的可用原料。",
+    "status": "not_run"
+  },
+  {
+    "id": "p07",
+    "kind": "shopping",
+    "input": "两餐合计需要40克大米，家里确认有30克。",
+    "acceptance": "合并需求后仅抵扣一次，预计补买10克；读取清单不写库存。",
+    "status": "not_run"
+  },
+  {
+    "id": "p08",
+    "kind": "shopping",
+    "input": "菜单需牛肉，库存只有“剩一点”或与需求不同的单位。",
+    "acceptance": "列待核对，不能自动认定足够或强行换算。",
+    "status": "not_run"
+  },
+  {
+    "id": "p09",
+    "kind": "shopping",
+    "input": "仅登记熟食，或者原料记录已较久未确认。",
+    "acceptance": "熟食不作原料抵扣；陈旧记录提示重确认，不宣称食物已变质。",
+    "status": "not_run"
+  },
+  {
+    "id": "p10",
+    "kind": "flow",
+    "input": "家人维护食材→推荐并发布→买菜更新总量→实际进食→回看→替换菜单。",
+    "acceptance": "两成员看到一致数据，实际与计划分开；重算采购且保留其他餐次，不自动按进食扣库存。",
+    "status": "not_run"
   }
 ]

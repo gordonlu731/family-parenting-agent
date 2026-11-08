@@ -215,7 +215,7 @@ class WorkflowTest(unittest.TestCase):
         self.assertEqual(self.confirm(p).status_code,409)
         self.assertIsNotNone(mod.create_app())
         with mod.database() as db:
-            self.assertEqual([r[0] for r in db.execute('SELECT version FROM schema_migrations ORDER BY version')],[1,2])
+            self.assertEqual([r[0] for r in db.execute('SELECT version FROM schema_migrations ORDER BY version')],[1,2,3])
 
     def test_single_replacement_preserves_other_meals_and_updates_shopping(self):
         self.confirm_profile()

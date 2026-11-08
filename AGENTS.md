@@ -1,6 +1,6 @@
 # Family parenting assistant
 
-One household, one child. Current application baseline: 0.2.4. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
+One household, one child. Current application baseline: 0.3.0. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
 
 ## Development
 
@@ -15,6 +15,7 @@ One household, one child. Current application baseline: 0.2.4. Read README.md, d
 - Authorization, household isolation, allergy-name checks, idempotency, duplicate-meal checks and version checks are server responsibilities. Preserve them when adding tools or voice.
 - Menu generation currently supports confirmed profiles aged at least 12 months. Allergy-name matching is incomplete; do not label recipes as medically verified or guaranteed safe.
 - Personal chats and drafts are private; confirmed records and menus are shared. Never put API keys or login tokens in browser code.
+- Pantry changes require explicit confirmation and optimistic revisions. Published menus, feeding records and shopping reads never consume stock. Cooked food, stale records, unknown quantities and incompatible units must not be silently treated as sufficient raw stock.
 - VoiceTest is local recording/playback only. Do not describe it as ASR, TTS or voice conversation.
 
 ## Operations and continuity
