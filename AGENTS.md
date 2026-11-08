@@ -1,6 +1,6 @@
 # Family parenting assistant
 
-One household, one child. Current application baseline: 0.2.3. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
+One household, one child. Current application baseline: 0.2.4. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
 
 ## Development
 

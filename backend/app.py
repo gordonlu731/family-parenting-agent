@@ -448,6 +448,39 @@ def create_app():
             rows = db.execute('SELECT r.*,m.name AS member_name FROM records r JOIN members m ON m.id=r.member_id WHERE r.family_id=? AND r.day BETWEEN ? AND ? AND r.deleted=0 ORDER BY r.day DESC,r.created_at DESC LIMIT 1000', (m['family_id'], lo.isoformat(), hi.isoformat())).fetchall()
             return [record_dict(r) for r in rows]
 
+    @app.get('/api/review')
+    def review(start: date, end: date, m=Depends(member)):
+        if end < start or (end - start).days > 30 or end > datetime.now(TZ).date():
+            error(422, '请选择截至今天、最多31天的回看范围')
+        with database() as db:
+            # One read snapshot keeps the plan and actual records consistent.
+            db.execute('BEGIN')
+            menu_rows = db.execute('SELECT * FROM menus WHERE family_id=? AND day BETWEEN ? AND ?',
+                                   (m['family_id'], start.isoformat(), end.isoformat())).fetchall()
+            record_rows = db.execute('SELECT r.*,m.name AS member_name FROM records r JOIN members m ON m.id=r.member_id WHERE r.family_id=? AND r.day BETWEEN ? AND ? AND r.deleted=0 ORDER BY r.created_at,r.id LIMIT 1001',
+                                     (m['family_id'], start.isoformat(), end.isoformat())).fetchall()
+            if len(record_rows) > 1000:
+                error(422, '这一范围的记录较多，请缩短日期范围后重试')
+        menu_map = {(row['day'], row['meal']): menu_dict(row) for row in menu_rows}
+        record_map = defaultdict(list)
+        for row in record_rows:
+            record_map[(row['day'], row['meal'])].append(record_dict(row))
+        days = []
+        for offset in range((end - start).days + 1):
+            day = (end - timedelta(days=offset)).isoformat()
+            slots = []
+            for meal in MEALS:
+                slot_records = record_map[(day, meal)]
+                slots.append({'meal': meal, 'menu': menu_map.get((day, meal)),
+                              'records': slot_records, 'has_records': bool(slot_records)})
+            days.append({'day': day, 'meals': slots})
+        return {'start': start.isoformat(), 'end': end.isoformat(), 'days': days,
+                'summary': {'planned_meals': len(menu_rows),
+                            'recorded_meals': sum(bool(slot['records']) for d in days for slot in d['meals']),
+                            'record_count': len(record_rows),
+                            'unrecorded_main_meals': sum(not slot['has_records'] for d in days for slot in d['meals'] if slot['meal'] != '加餐')},
+                'note': '菜单为当前保存的安排，可能经过修改；实际进食以记录为准。未记录不等于没吃，有记录也不代表已完整记录这一餐。'}
+
     @app.post('/api/records')
     def add_record(data: RecordInput, request: Request, m=Depends(member)):
         with database(True) as db:
