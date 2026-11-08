@@ -1,6 +1,6 @@
 # Family parenting assistant
 
-One household, one child. Current baseline: 0.2.3. Read README.md and docs/STATUS.md before changing behavior; docs/HANDOFF.md lists pending work.
+One household, one child. Current application baseline: 0.2.3. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
 
 ## Development
 
@@ -25,3 +25,13 @@ One household, one child. Current baseline: 0.2.3. Read README.md and docs/STATU
 - Existing migrations are immutable; add numbered migrations. Back up before upgrading an actual deployment. Preserve Compose project name and persistent volume; do not delete volumes to fix issues.
 - Browser visual QA is pending because the previous managed preview failed with uv_interface_addresses. Follow the preview service's documented repair/recovery process, without bypasses.
 - Update docs/STATUS.md and docs/VERIFICATION.md for meaningful changes. Distinguish mocked checks, real model evaluation, browser verification and deployment.
+
+## Required project continuity
+
+- At the start of a task, inspect git status, fetch the target branch, and reconcile local changes with the remote without losing uncommitted work. Do not assume a previous chat, local ZIP, cached checkout or this version label is current.
+- GitHub is the source of truth for shared code, requirements and progress. Keep this project's code and documentation together in this repository; do not copy quantitative-project code or private household data into it.
+- Update the corresponding documentation in the same change as the work: CORE_SCENARIOS for product requirements, DECISIONS for confirmed choices and unresolved proposals, ROADMAP for task status, STATUS for the current snapshot, VERIFICATION for observed checks, and HANDOFF for the next concrete task. Keep README links and these instructions consistent.
+- Do not label an assistant's suggestion as a user-approved requirement. Do not label planned, implemented, mocked-tested, real-model-tested and deployed states interchangeably. Explicitly preserve unknowns and blockers.
+- Record the application version separately from documentation updates and Git commit identity. Documentation-only changes do not bump the application version. Record releases in CHANGELOG.md when behavior changes.
+- Before publishing, review the diff for real family information or secrets; run checks appropriate to the change. Use normal commits and verify the remote branch after pushing. Never force-update main or overwrite concurrent work.
+- End each task with a concise account of what changed, verification limits and next work; link to the relevant GitHub files or commit. If pushing is blocked, state that changes remain local instead of claiming they were saved to GitHub.

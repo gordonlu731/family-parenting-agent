@@ -1,24 +1,42 @@
 # 仓库与云端开发
 
-源码仓库：https://github.com/gordonlu731/family-parenting-agent。维护者明确选择Public，只公开源码和虚构演示数据，家庭记录、凭证和部署配置不提交Git。项目与量化仓库分开。
+更新：2026年11月8日。源码仓库：https://github.com/gordonlu731/family-parenting-agent 。用户选择Public，只公开源码、通用设计和虚构数据，家庭记录、凭证与部署配置不提交Git。本项目与量化仓库分开。
 
-本批次将0.2.1源码接到GitHub初始化提交之后。生成物dist不提交Git，由npm run build生成。新环境先读取AGENTS.md、README.md、docs/STATUS.md和docs/HANDOFF.md。
+## 新会话如何接手
+
+1. 检查git status，获取目标远程分支更新；保留未提交工作，不用旧ZIP覆盖新代码。
+2. 读取根目录AGENTS.md和README.md，再读STATUS、CORE_SCENARIOS、DECISIONS、ROADMAP、HANDOFF。
+3. 以Git提交识别具体代码，应用版本只表示功能基线。当前应用0.2.3，需求文档更新不会自动升级应用版本。
+4. 选择ROADMAP的一项任务，核对真实代码能力、依赖与验收要求后实施。不把建议或规划当成已有实现。
+5. 修改功能时同步维护需求/状态/任务/验证/交接文档；有功能版本更新则记CHANGELOG。检查后提交并核对远程结果。
+
+GitHub保存项目背景、决定、需求、代码、测试和进度，不能保证复制全部聊天内容；重要结论应提炼到对应文档，未检索到的旧指令不能声称记得原文。
+
+## 当前可以继续的工作
+
+优先R1历史回看与轻量反馈，再R2共享食材、R3推荐上下文、R4采购缺口。它们可在临时数据库、虚构数据和模拟模型下开发，不依赖ECS或真实密钥。详细完成条件见ROADMAP.md，下一任务见HANDOFF.md。
+
+ECS手动安装和部署按用户决定暂停，等待外部自动执行链路。用户已提供Docker与Compose安装完成的结果，无需重复要求安装。自动连接和部署回执尚未接入本仓库。FIRST_RUN.md作为后续运维参考，不代表现在要用户手动执行。
 
 ## 云端开发环境
 
-使用Python 3.12、Node 24，安装命令：
+Python 3.12、Node 24。新环境按锁文件安装：
 
 ```bash
 python3 -m pip install -r requirements.lock
 npm ci --ignore-scripts
-npm run build
-npm test
+bash scripts/verify.sh
 ```
 
-开发启动命令为npm run dev，仅用于隔离演示环境；真实家庭部署见FIRST_RUN.md。默认不配置模型密钥，自动检查不会产生模型费用。
+统一验证入口构建前端并运行后台模拟测试；不连接ECS或调用真实模型。GitHub Verify使用同一入口，实际状态以对应提交的Actions结果为准。详细验证证据见VERIFICATION.md。
 
-仓库中包含AGENTS.md，记录权限、共享数据与私人草稿的规则和真实验证限制。开启后续开发任务时先读AGENTS.md、README.md、docs/STATUS.md、docs/HANDOFF.md。
+开发启动命令为npm run dev，仅用于隔离演示。dist和node_modules由构建/安装生成，不提交Git。普通问答与AI草稿只有安全配置真实模型后才会调用供应商；不得在聊天中收集API密钥。
 
-## 当前下一任务
+## 版本与数据分工
 
-代码入库后，核实ECS系统及Docker/Compose状态，按FIRST_RUN.md建立私人试运行。接入真实国内模型前确认API Key和服务地域，密钥只在服务器终端隐藏输入，不在聊天中发送。随后评测实际记录抽取与菜单生成，再完成微信真机测试。当前代码未部署，48项后台测试采用模拟模型回复。
+- 代码和通用项目资料：本Git仓库，以提交和CHANGELOG追溯。
+- 家庭实际数据：未来运行实例的私有数据库及受控备份，不在公开Git。
+- 密钥、登录邀请、录音和部署私有配置：安全运行配置，不提交、不写普通日志。
+- 模拟测试、真实模型、浏览器、微信、ECS运行：分别留证，任何一项通过都不能替代其他验收。
+
+本轮只整理项目资料，未部署或新增业务功能。下轮接手应重读远程STATUS和ROADMAP，不能把此句当作未来状态。
