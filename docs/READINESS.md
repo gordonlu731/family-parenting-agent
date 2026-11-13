@@ -6,7 +6,7 @@
 
 GitHub Verify的browser作业在独立Ubuntu环境安装requirements-browser.lock，构建真实前端并运行scripts/browser_check.py。覆盖1440×1000桌面和390×844手机尺寸，使用临时虚构家庭、两个独立浏览器身份、实际ASGI接口与合成模型响应。
 
-已观察到[运行43460550470](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43460550470)通过：食材确认、菜单草稿核对后发布、买后库存与采购刷新、计划/实际分开回看、邀请加入及刷新登录保持、共享记录、无横向溢出。首次运行发现下拉框隐式标签定位问题，已补明确aria-label。后续每次变更仍需看对应提交结果，不能沿用旧运行作为新提交的证明。
+已观察到代码提交23d9b06的[运行43464890585](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43464890585)通过：食材确认、菜单草稿核对后发布、买后库存与采购刷新、计划/实际分开回看、邀请加入及刷新登录保持、共享记录、无横向溢出。首次运行发现下拉框隐式标签定位问题，已补明确aria-label。本次修订后的截图定位和食材排版也在该运行通过；同次构建/96项测试和容器检查全部通过。后续代码变更仍需看对应提交结果。
 
 该测试把浏览器同源请求桥接到TestClient，不启动公网服务、不验证HTTPS代理或微信内核。浏览器依赖不进入生产镜像。本地Chromium仍因socket权限无法启动，使用独立CI；不通过调整权限绕过限制。
 
