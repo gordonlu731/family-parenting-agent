@@ -68,7 +68,7 @@ export function Pantry({api,ready,onReady}:{api:Api;ready:boolean;onReady:(value
         {questions.map((q,i)=><p className="warning" key={i}>{q}</p>)}
         <button className="secondary full" disabled={!ready||busy||!text.trim()}>{busy?'正在整理…':'整理为待核对食材草稿'}</button>
         {!ready&&<p className="hint">AI尚未接入，仍可用上方表单维护。</p>}
-        <button className="text-button" type="button" disabled={busy} onClick={()=>{aiKey.current=requestKey();setError('')}}>使用新请求重试整理</button>
+        <>{error&&<button className="text-button" type="button" disabled={busy} onClick={e=>{aiKey.current=requestKey();void extract(e)}}>重新尝试整理</button>}</>
       </form>
     </>}
     <p className="hint">{data?.note} 熟食不按原料推荐或抵扣。{data&&`超过${data.reconfirm_days}天未核对会提示确认；这不是保质期判断。`}</p>

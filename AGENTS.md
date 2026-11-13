@@ -1,6 +1,6 @@
 # Family parenting assistant
 
-One household, one child. Current application baseline: 0.3.0. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
+One household, one child. Current application baseline: 0.3.1. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
 
 ## Development
 
@@ -24,7 +24,7 @@ One household, one child. Current application baseline: 0.3.0. Read README.md, d
 - Never commit .env, databases, backups, family exports, recordings or production credentials. Use fictitious data only.
 - Read-only inspection and local implementation may proceed within the task. Avoid modifying unrelated ECS services. Never claim deployed, live-model verified, or WeChat tested without observing it.
 - Existing migrations are immutable; add numbered migrations. Back up before upgrading an actual deployment. Preserve Compose project name and persistent volume; do not delete volumes to fix issues.
-- Browser visual QA is pending because the previous managed preview failed with uv_interface_addresses. Follow the preview service's documented repair/recovery process, without bypasses.
+- Managed Chromium is blocked by a runtime socket permission. Use the independent GitHub browser job for real desktop/mobile interaction checks and inspect synthetic screenshots. A passing browser job does not establish WeChat compatibility or live-model quality; never bypass runtime permissions.
 - Update docs/STATUS.md and docs/VERIFICATION.md for meaningful changes. Distinguish mocked checks, real model evaluation, browser verification and deployment.
 
 ## Required project continuity
@@ -36,3 +36,9 @@ One household, one child. Current application baseline: 0.3.0. Read README.md, d
 - Record the application version separately from documentation updates and Git commit identity. Documentation-only changes do not bump the application version. Record releases in CHANGELOG.md when behavior changes.
 - Before publishing, review the diff for real family information or secrets; run checks appropriate to the change. Use normal commits and verify the remote branch after pushing. Never force-update main or overwrite concurrent work.
 - End each task with a concise account of what changed, verification limits and next work; link to the relevant GitHub files or commit. If pushing is blocked, state that changes remain local instead of claiming they were saved to GitHub.
+
+## Readiness tools
+
+- scripts/evaluate.py defaults to a dry run. --mock-model exercises the runner with synthetic replies; only --call-model permits potentially billable calls, capped by --max-calls. It creates isolated fictional databases and never uses the configured production APP_DB. Reports stay private next to the configured database (evaluations/), under ignored data/ locally or outside the source checkout; preserve human-review-pending status.
+- scripts/operations.py backup uses SQLite online backup, private files and checksummed manifests. check is read-only; restore-check restores only to a temporary directory. Retention only prunes validated tool-owned pairs after a successful backup. It does not provide encrypted off-host storage or production restore.
+- ops/*.example are inactive deployment templates. Do not install timers, trigger ECS actions or activate notifications while deployment remains paused.

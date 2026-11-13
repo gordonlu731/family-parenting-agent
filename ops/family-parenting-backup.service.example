@@ -1,0 +1,12 @@
+[Unit]
+Description=Local verified backup of the family parenting application
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+# Deployment template only. Adjust the directory before installing this unit.
+WorkingDirectory=/opt/family-parenting-agent
+ExecStart=/usr/bin/docker compose -p family-parenting-agent exec -T app python scripts/operations.py backup --source /data/family.sqlite3 --destination /data/backups --keep 14
+TimeoutStartSec=180
+UMask=0077

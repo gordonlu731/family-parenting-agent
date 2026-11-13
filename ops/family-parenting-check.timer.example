@@ -1,0 +1,10 @@
+[Unit]
+Description=Periodic family application readiness check
+
+[Timer]
+OnBootSec=15m
+OnUnitActiveSec=1h
+Unit=family-parenting-check.service
+
+[Install]
+WantedBy=timers.target

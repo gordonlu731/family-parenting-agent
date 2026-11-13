@@ -12,7 +12,8 @@ COPY requirements.lock ./
 RUN pip install --no-cache-dir -r requirements.lock && useradd --uid 10001 --create-home appuser && mkdir /data && chown appuser:appuser /data
 COPY --from=web /src/dist ./dist
 COPY backend ./backend
-COPY scripts/manage.py scripts/check_model.py ./scripts/
+COPY scripts/manage.py scripts/check_model.py scripts/operations.py scripts/evaluate.py ./scripts/
+COPY evals ./evals
 USER appuser
 ENV APP_DB=/data/family.sqlite3 COOKIE_SECURE=true DEMO_MODE=false
 EXPOSE 8000

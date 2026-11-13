@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily local family application backup
+
+[Timer]
+OnCalendar=*-*-* 03:15:00 Asia/Shanghai
+Persistent=true
+RandomizedDelaySec=5m
+Unit=family-parenting-backup.service
+
+[Install]
+WantedBy=timers.target

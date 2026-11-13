@@ -8,7 +8,9 @@
 .pantry-item b{font-size:16px;color:#315b3e}
 .pantry-item span,.pantry-item small{font-size:12px;color:#6d7e5b;line-height:1.8}
 .pantry-item p{font-size:14px;line-height:1.8;margin:8px 0;color:#506942}
-.pantry-item button+button{margin-left:16px}
+.pantry-item small{display:block;margin-bottom:8px}
+.pantry-item>.text-button{margin:8px 14px 0 0}
+.pantry-item button+button{margin-left:0}
 .pantry-ai{border-top:1px solid #e0e6d8;margin-top:20px;padding-top:20px}
 .pantry-ai h3{font-size:17px;color:#315b3e}
 .shopping-group{margin:22px 0}

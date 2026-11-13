@@ -52,3 +52,11 @@ jobs:
           name: synthetic-browser-results
           path: test-results/browser/
           retention-days: 7
+  container:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - run: bash scripts/container_check.sh

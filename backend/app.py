@@ -313,6 +313,15 @@ def create_app():
 
     @app.get('/api/health')
     def health():
+        path = Path(os.getenv('APP_DB', str(ROOT/'data/family.sqlite3')))
+        if not path.is_file():
+            return JSONResponse({'status': 'unavailable'}, status_code=503)
+        try:
+            with database() as db:
+                if not db.execute('SELECT version FROM schema_migrations LIMIT 1').fetchone():
+                    raise sqlite3.DatabaseError()
+        except sqlite3.Error:
+            return JSONResponse({'status': 'unavailable'}, status_code=503)
         return {'status': 'ok'}
 
     @app.get('/api/config')

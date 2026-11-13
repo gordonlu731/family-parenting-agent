@@ -70,6 +70,12 @@ def route_app(page, client):
     page.route('**/*', bridge)
 
 
+def capture(page, path):
+    from playwright.sync_api import expect
+    expect(page.locator('.toast')).to_have_count(0, timeout=7000)
+    page.screenshot(path=str(path))
+
+
 def run(output, executable=None):
     from playwright.sync_api import sync_playwright, expect
     from fastapi.testclient import TestClient
@@ -97,7 +103,7 @@ def run(output, executable=None):
                             profile.pop('updated_at')
                             profile.update(age_months=24, allergy_status='none_known')
                             assert owner.put('/api/profile', json=profile).status_code == 200
-                            context = browser.new_context(viewport=viewport)
+                            context = browser.new_context(viewport=viewport,locale='zh-CN',timezone_id='Asia/Shanghai')
                             context.add_cookies([{'name': 'family_session', 'value': token, 'url': ORIGIN}])
                             page = context.new_page()
                             route_app(page, owner)
@@ -114,7 +120,7 @@ def run(output, executable=None):
                             dialog.get_by_label('我已核对，这是家里现在实际的食材情况。').check()
                             dialog.get_by_role('button', name='确认更新，全家可见', exact=True).click()
                             expect(dialog.locator('.pantry-item')).to_have_count(1)
-                            page.screenshot(path=str(output/(name+'-pantry.png')))
+                            capture(page, output/(name+'-pantry.png'))
                             dialog.get_by_role('button', name='关闭', exact=True).click()
                             stage = name+':menu-draft'
                             page.get_by_role('button', name='生成菜单草稿', exact=True).click()
@@ -130,7 +136,8 @@ def run(output, executable=None):
                             page.get_by_role('button', name='看七天', exact=True).click()
                             dialog = page.get_by_role('dialog')
                             expect(dialog.get_by_text('预计补买 30 克', exact=True)).to_be_visible()
-                            page.screenshot(path=str(output/(name+'-shopping-before.png')))
+                            dialog.locator('.shopping-gaps').scroll_into_view_if_needed()
+                            capture(page, output/(name+'-shopping-before.png'))
                             dialog.get_by_role('button', name='买完了 / 核对家里食材', exact=True).click()
                             dialog.get_by_role('button', name='更正 / 确认余量', exact=True).click()
                             dialog.get_by_label('当前总量（可留空）', exact=True).fill('80')
@@ -140,7 +147,8 @@ def run(output, executable=None):
                             dialog.get_by_role('button', name='关闭', exact=True).click()
                             expect(page.get_by_role('dialog')).to_have_attribute('aria-label', '接下来七天的菜单')
                             expect(dialog.get_by_text('家里已有足够记录', exact=True)).to_be_visible()
-                            page.screenshot(path=str(output/(name+'-shopping-after.png')))
+                            dialog.locator('.shopping-gaps').scroll_into_view_if_needed()
+                            capture(page, output/(name+'-shopping-after.png'))
                             dialog.get_by_role('button', name='关闭', exact=True).click()
                             stage = name+':record-review'
                             page.get_by_role('button', name='记一顿饭', exact=True).click()
@@ -153,10 +161,11 @@ def run(output, executable=None):
                             expect(page.locator('.review-day').first.get_by_text('QA午餐', exact=True)).to_be_visible()
                             expect(page.locator('.review-day').first.get_by_text('小米粥', exact=True)).to_be_visible()
                             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1')
-                            page.screenshot(path=str(output/(name+'-review.png')))
+                            page.locator('.review-day').first.locator('.review-slot').filter(has_text='午餐').scroll_into_view_if_needed()
+                            capture(page, output/(name+'-review.png'))
                             stage = name+':caregiver-login'
                             invite = owner.post('/api/invites', json={}).json()['path']
-                            other_context = browser.new_context(viewport=viewport)
+                            other_context = browser.new_context(viewport=viewport,locale='zh-CN',timezone_id='Asia/Shanghai')
                             other = other_context.new_page()
                             route_app(other, caregiver)
                             other.goto(ORIGIN+invite)

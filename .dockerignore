@@ -9,3 +9,6 @@ backups
 __pycache__
 tests
 docs
+
+.openai
+test-results
