@@ -65,7 +65,7 @@ export function Review({api,today,revision,onRecord}:{api:Api;today:string;revis
   return <section className="card review-card">
     <div className="section-title"><div><h2>菜单与实际进食</h2><p>按已记录的事实回看，方便下次安排。</p></div></div>
     <div className="review-controls">
-      <label>查看范围<select value={span} onChange={e=>setSpan(Number(e.target.value))}><option value={1}>一天</option><option value={7}>近七天</option></select></label>
+      <label>查看范围<select aria-label="查看范围" value={span} onChange={e=>setSpan(Number(e.target.value))}><option value={1}>一天</option><option value={7}>近七天</option></select></label>
       <label>截至日期<input type="date" max={today} value={end} onChange={e=>{if(e.target.value&&e.target.value<=today)setEnd(e.target.value)}}/></label>
       <button className="secondary" onClick={()=>setEnd(shiftDay(end,-span))}>往前{span===1?'一天':'七天'}</button>
       <button className="secondary" disabled={end>=today} onClick={()=>setEnd(shiftDay(end,span)>today?today:shiftDay(end,span))}>往后{span===1?'一天':'七天'}</button>

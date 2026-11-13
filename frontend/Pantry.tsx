@@ -12,14 +12,14 @@ export function PantryFields({item,onChange}:{item:StockItem;onChange:(value:Sto
   return <>
     <label>食材名称<input required value={item.name} maxLength={80} onChange={e=>field('name',e.target.value)} placeholder="例如：番茄"/></label>
     <div className="form-grid">
-      <label>存放位置<select value={item.location} onChange={e=>field('location',e.target.value)}>{['未说明','冷藏','冷冻','常温'].map(v=><option key={v}>{v}</option>)}</select></label>
-      <label>类型<select value={item.kind} onChange={e=>field('kind',e.target.value)}><option value="raw">原料</option><option value="cooked">已经做好的熟食</option></select></label>
+      <label>存放位置<select aria-label="存放位置" value={item.location} onChange={e=>field('location',e.target.value)}>{['未说明','冷藏','冷冻','常温'].map(v=><option key={v}>{v}</option>)}</select></label>
+      <label>类型<select aria-label="类型" value={item.kind} onChange={e=>field('kind',e.target.value)}><option value="raw">原料</option><option value="cooked">已经做好的熟食</option></select></label>
     </div>
-    <label>现在是否还有<select value={item.status} onChange={e=>onChange({...item,status:e.target.value,...(e.target.value==='used_up'?{quantity:null,unit:'适量',amount_note:''}:{})})}><option value="available">还有，核对当前余量</option><option value="used_up">已用完 / 这条记录无效</option></select></label>
+    <label>现在是否还有<select aria-label="现在是否还有" value={item.status} onChange={e=>onChange({...item,status:e.target.value,...(e.target.value==='used_up'?{quantity:null,unit:'适量',amount_note:''}:{})})}><option value="available">还有，核对当前余量</option><option value="used_up">已用完 / 这条记录无效</option></select></label>
     {item.status==='available'&&<>
       <div className="form-grid">
         <label>当前总量（可留空）<input type="number" min="0.01" max="100000" step="0.01" value={item.quantity??''} onChange={e=>onChange({...item,quantity:e.target.value||null,unit:e.target.value?(item.unit==='适量'?'克':item.unit):'适量'})}/></label>
-        <label>单位<select disabled={item.quantity===null} value={item.unit} onChange={e=>onChange({...item,unit:e.target.value,...(e.target.value==='适量'?{quantity:null}:{})})}>{['适量','克','毫升','个','份'].map(v=><option key={v}>{v==='适量'?'数量不确定':v}</option>)}</select></label>
+        <label>单位<select aria-label="单位" disabled={item.quantity===null} value={item.unit} onChange={e=>onChange({...item,unit:e.target.value,...(e.target.value==='适量'?{quantity:null}:{})})}>{['适量','克','毫升','个','份'].map(v=><option key={v}>{v==='适量'?'数量不确定':v}</option>)}</select></label>
       </div>
       <label>粗略余量说明（可选）<input value={item.amount_note} maxLength={200} onChange={e=>field('amount_note',e.target.value)} placeholder="例如：还剩一点，不需要称重"/></label>
     </>}
