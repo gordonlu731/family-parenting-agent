@@ -1,3 +1,9 @@
+## 2026-11-15 HTTPS配置兼容补丁（未部署）
+
+user_service.environment继续接受http://127.0.0.1:18080与COOKIE_SECURE=false的私人配置；正式模式允许完整HTTPS origin，但COOKIE_SECURE必须true。拒绝外部明文HTTP、HTTPS关闭安全Cookie、用户信息、业务路径、查询/片段和无效端口。HTTPS根路径结尾斜线规范化后传入应用，保留Origin/CSRF比较。
+
+两种模式的后端都只绑定127.0.0.1:18080，不创建证书/代理，不更改防火墙或数据位置。配置600、目录700、仅当前用户unit和环境白名单不变。生产配置必须在真实代理/证书就绪且已准备回退后切换，不能把源代码兼容写成ECS已启用HTTPS。
+
 # 非root开发身份的私人部署
 
 2026-11-14实机更新：已用native-user-service完成私人回环部署与虚构持久化/重启/备份恢复验收，

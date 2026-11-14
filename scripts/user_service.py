@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 sys.path.insert(0,str(Path(__file__).resolve().parent))
-from deploy import read_env
+from deploy import read_env, https_url
 
 UNIT='family-parenting-agent.service'
 
@@ -42,12 +42,19 @@ def paths(root,data):
 def environment(root,data):
     owned(root/'.env');owned(data,directory=True)
     values=read_env(root/'.env')
-    require(values.get('DEMO_MODE')=='false' and values.get('APP_PORT')=='18080' and
-            values.get('PUBLIC_ORIGIN')=='http://127.0.0.1:18080' and values.get('COOKIE_SECURE')=='false')
+    require(values.get('DEMO_MODE')=='false' and values.get('APP_PORT')=='18080')
+    # The listener stays on loopback in both modes. HTTPS belongs to the
+    # separately configured reverse proxy; never downgrade its session cookie.
+    origin=values.get('PUBLIC_ORIGIN','')
+    private=origin=='http://127.0.0.1:18080' and values.get('COOKIE_SECURE')=='false'
+    if not private:
+        require(values.get('COOKIE_SECURE')=='true')
+        origin=https_url(origin, origin=True)
     require(len(values.get('BOOTSTRAP_TOKEN',''))>=32)
     allowed={'BOOTSTRAP_TOKEN','PUBLIC_ORIGIN','COOKIE_SECURE','DEMO_MODE','MODEL_API_KEY','MODEL_BASE_URL','MODEL_ID',
              'MODEL_ENABLE_THINKING','MODEL_DAILY_REQUEST_LIMIT','PANTRY_RECONFIRM_DAYS'}
     env={k:values[k] for k in allowed if k in values}
+    env['PUBLIC_ORIGIN']=origin
     env.update(PATH=os.environ.get('PATH','/usr/bin:/bin'),HOME=str(Path.home()),LANG='C.UTF-8',
                APP_DB=str(data/'family.sqlite3'),PYTHONDONTWRITEBYTECODE='1')
     return env

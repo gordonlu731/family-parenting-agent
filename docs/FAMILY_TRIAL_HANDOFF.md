@@ -15,7 +15,7 @@
 
 管理员审阅Caddyfile.example，将域名替换为确认域名，代理仍指向127.0.0.1:18080；安装前备份原代理配置，保留其他站点。
 需核实DNS、证书签发与80/443入站，不能直接覆盖现有代理配置。本轮未执行系统操作。
-应用切换PUBLIC_ORIGIN=https及COOKIE_SECURE=true前，须扩展user_service当前仅允许private配置的环境校验并测试；不要直接改.env强行启动。
+2026-11-15源码已补user_service的HTTPS origin支持：必须是无用户信息/查询/片段/业务路径的完整HTTPS origin，并强制COOKIE_SECURE=true；应用仍回环监听。该补丁尚未部署到ECS，不能直接在旧发布上改.env。先通过新提交验证并准备匹配的发布/备份监测路径，待代理和证书实际可用后再切换；保留旧配置和回退版本。不以Cookie校验通过代替TLS证书或微信验收。
 域名确定后再做证书、HTTP跳转、Secure/HttpOnly Cookie、Origin/CSRF、匿名拒绝及浏览器登录刷新验收。
 
 ## 正式数据切换（未执行）
