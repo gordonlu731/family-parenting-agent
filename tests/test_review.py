@@ -40,7 +40,7 @@ class ReviewTest(unittest.TestCase):
         self.assertEqual(self.owner.put('/api/menus',json=body,headers={'Idempotency-Key':'competing-copy'}).status_code,409)
         self.assertEqual(self.owner.get('/api/records').json(),actual)
         self.assertEqual(self.owner.get('/api/pantry').json(),stock)
-        self.assertEqual(self.review().json()['days'][0]['meals'][1]['menu']['id'],original['id'])
+        self.assertEqual(self.review().json()['days'][0]['meals'][1]['menu'],original)
         shopping=self.owner.get('/api/shopping',params={'start':tomorrow,'end':tomorrow}).json()
         self.assertTrue(shopping['items'])
         self.assertTrue(all(i['category']=='check' for i in shopping['items']))
