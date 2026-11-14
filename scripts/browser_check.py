@@ -233,6 +233,10 @@ def main():
         result = run(args.output, args.chromium_path)
     except Exception as exc:
         print('Browser checks failed; inspect the synthetic report. Error type: '+type(exc).__name__)
+        report=args.output/'result.json'
+        if report.exists():
+            info=json.loads(report.read_text())
+            print(json.dumps({k:info.get(k) for k in ('stage','error_type','detail')},ensure_ascii=False))
         return 1
     print('Browser checks passed for '+', '.join(i['viewport'] for i in result)+'. Synthetic provider; not WeChat or live-model verification.')
     return 0
