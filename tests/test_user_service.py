@@ -2,6 +2,8 @@
 import importlib.util
 import os
 from pathlib import Path
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -49,6 +51,19 @@ class UserServiceTests(unittest.TestCase):
     def test_systemd_specifier_and_path_quoting(self):
         self.assertEqual(service.quote('/owned/%n dir'), '"/owned/%%n dir"')
         with self.assertRaises(ValueError):service.quote('owned\npath')
+
+    @unittest.skipUnless(shutil.which('systemd-analyze'), 'systemd parser unavailable')
+    def test_generated_unit_passes_real_systemd_parser_with_special_path(self):
+        root=self.base/'release %n with spaces'
+        executable=root/'.venv/bin/python'
+        executable.parent.mkdir(parents=True)
+        executable.write_text('#!/bin/sh\nexit 0\n');executable.chmod(0o700)
+        target=self.base/service.UNIT;target.write_text(service.unit(root,self.data))
+        runtime=self.base/'runtime';runtime.mkdir(mode=0o700)
+        result=subprocess.run(['systemd-analyze','--user','--man=no','verify',str(target)],
+                              capture_output=True,text=True,timeout=15,
+                              env={**os.environ,'XDG_RUNTIME_DIR':str(runtime)})
+        self.assertEqual(result.returncode,0,result.stderr)
 
     def test_root_is_refused_even_when_paths_exist(self):
         with patch.object(os,'geteuid',return_value=0),self.assertRaises(ValueError):service.paths(self.root,self.data)

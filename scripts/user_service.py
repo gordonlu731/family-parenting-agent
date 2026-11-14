@@ -59,10 +59,10 @@ def quote(value):
 
 
 def unit(root,data):
+    # run changes cwd itself. WorkingDirectory does not use ExecStart's quoting.
     return f'''[Unit]
 Description=Private family application (current user only)
 [Service]
-WorkingDirectory={quote(root)}
 ExecStart={quote(root/'.venv/bin/python')} -I -B {quote(root/'scripts/user_service.py')} run --root {quote(root)} --data-dir {quote(data)}
 Restart=on-failure
 RestartSec=5

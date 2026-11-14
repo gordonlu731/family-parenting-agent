@@ -1,3 +1,5 @@
+- 修复原生用户unit的WorkingDirectory引号导致真实systemd拒绝加载；启动器负责切换目录，新增真实systemd解析器回归（含空格和百分号路径）。应用/API版本不变。
+
 ## 未发布运维工具补充（应用/API仍0.3.2）
 
 - Rootless不可用时可使用非rootsystemd用户服务；仅回环、私有配置与独立持久化，保留旧unit。
