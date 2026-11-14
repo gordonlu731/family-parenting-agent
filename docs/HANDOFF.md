@@ -1,5 +1,7 @@
 # 下一步交接
 
+2026-11-15：用户已确认使用DeepSeek官方平台的API Key。源码0.3.4适配已准备，ECS仍0.3.3；先按[DEEPSEEK_SETUP](DEEPSEEK_SETUP.md)提供一次隐藏输入Key的方式，再安全配置并做最多8次的全轮真实验收。不要把Key已有误记为已注入/已连通；不要沿用千问enable_thinking或旧deepseek-chat默认标识。
+
 2026-11-15补充：正式HTTPS配置的启动器兼容修复已完成源码和隔离测试，尚未更新ECS。现允许完整HTTPS origin且必须使用安全Cookie，私人回环模式保持。后续不要再把该源码改动列为未开发；但旧ECS发布仍须在入口条件具备后更新，不能仅编辑.env强行切换。
 
 复用现有family-dev SSH/native-user-service，不重配SSH/Docker/审批执行器，不碰量化项目。当前精确运行源码、CI和任务回执见STATUS/VERIFICATION。

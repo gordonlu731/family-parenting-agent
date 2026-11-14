@@ -1,6 +1,6 @@
 # Family parenting assistant
 
-One household, one child. Current application baseline: 0.3.3. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
+One household, one child. Current application baseline: 0.3.4. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
 
 ## Development
 
@@ -45,3 +45,5 @@ One household, one child. Current application baseline: 0.3.3. Read README.md, d
 - scripts/deploy.py configure --non-interactive creates a new private .env from selected process variables, with no prompts or network access; never overwrites an existing config or reuses another project identity. Production mode requires an explicit HTTPS origin.
 
 - New non-root user-service fallback: read docs/USER_DEPLOYMENT.md. scripts/user_service.py installs only the current user's unit, keeps private configuration/data and never calls sudo or the host Docker daemon. A successful local/CI check is not ECS deployment evidence. Ordinary project deployment proceeds autonomously once its dedicated SSH identity and system initialization are actually available.
+
+- The owner selected official DeepSeek API for this project. Read docs/DEEPSEEK_SETUP.md; the key is not yet installed or tested. For api.deepseek.com the shared thinking flag maps to thinking.type (default disabled), never Qwen enable_thinking. Preserve the global live-test budget and existing production configuration/data.

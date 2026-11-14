@@ -1,5 +1,6 @@
 """Provider payload and sanitized errors, shared with the operator smoke check."""
 import os
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -7,9 +8,13 @@ import httpx
 def build_body(messages, json_mode=False, max_tokens=1000):
     body = {'model': os.environ['MODEL_ID'], 'messages': messages, 'max_tokens': max_tokens}
     thinking = os.getenv('MODEL_ENABLE_THINKING', '').strip().lower()
-    if thinking:
-        if thinking not in ('true', 'false'):
-            raise ValueError('MODEL_ENABLE_THINKING must be true, false or empty')
+    if thinking not in ('', 'true', 'false'):
+        raise ValueError('MODEL_ENABLE_THINKING must be true, false or empty')
+    if urlsplit(os.getenv('MODEL_BASE_URL', '')).hostname == 'api.deepseek.com':
+        # Official DeepSeek uses its own switch and defaults to thinking. Our
+        # short structured workflows default to non-thinking unless requested.
+        body['thinking'] = {'type': 'enabled' if thinking == 'true' else 'disabled'}
+    elif thinking:
         body['enable_thinking'] = thinking == 'true'
     if json_mode:
         body['response_format'] = {'type': 'json_object'}

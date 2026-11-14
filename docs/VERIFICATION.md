@@ -1,3 +1,11 @@
+# 2026-11-15 DeepSeek官方适配（源码0.3.4，未部署）
+
+- 用户在来源选择中明确确认DeepSeek官方平台。核对官方quick start、Chat Completions、JSON和models文档；当前推荐ID为deepseek-flash，官方思考字段为thinking.type，默认模式与本项目短JSON工作流需显式区分。
+- 官方host的共享开关转为thinking.type=disabled/enabled，留空默认disabled；其他供应商保留原参数，模型名不用于猜平台。新配置选择官方host默认false。
+- 本地TypeScript/Vite构建及114项测试通过，新增3项覆盖官方配置默认、开关映射/其他供应商不回归、模拟官方端点的合成JSON成功/空白失败与仅一次请求。所有HTTP为MockTransport，真实调用0。
+- 补DEEPSEEK_SETUP：一次安全输入、仅更新模型字段、匹配源码、模型列表核实、1次连通及核心场景，仍受全轮8次总限额。API Key未提供，本会话没有ECS登录、配置修改、模型费用或业务数据写入。
+- 源码应用版本0.3.4，无数据库迁移；实际ECS仍0.3.3/86f3f29。后续独立CI结果按本次提交查看，不将模拟结果写成真实模型或微信已通过。
+
 # 2026-11-15 HTTPS启动配置兼容检查（未部署）
 
 - 复核部署分支ae76511、0.3.3发布回执和最新Verify43606221440 success，当前服务/108测试等结论来自既有ECS记录，本会话没有重新登录ECS。

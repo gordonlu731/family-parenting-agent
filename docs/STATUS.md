@@ -1,5 +1,9 @@
 # 当前状态
 
+## 2026-11-15 DeepSeek官方接入准备（源码0.3.4，未部署）
+
+用户确认已有DeepSeek官方API Key，但Key尚未安全配置到本项目。源码已适配官方thinking.type参数，默认disabled，保留JSON模式；其他供应商行为保持。配置与下一步见[DEEPSEEK_SETUP](DEEPSEEK_SETUP.md)。没有读取用户Key、调用真实供应商或更新ECS。以下0.3.3仍是实际部署版本。
+
 ## 2026-11-15 HTTPS配置兼容修复（源码准备，未更新ECS）
 
 当前用户服务原先只接受私人HTTP origin，正式HTTPS会在启动器校验处被拒绝。这是可独立修复的软件缺口，现已允许完整HTTPS origin且强制COOKIE_SECURE=true；监听仍固定127.0.0.1:18080，原私人模式保持可用。不得用关闭安全Cookie绕过校验。修复只影响运维启动配置，应用/API版本仍0.3.3，实际ECS版本仍以下86f3f29。
