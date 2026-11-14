@@ -37,29 +37,39 @@ def https_url(value, origin=False):
     return value.rstrip('/')
 
 
-def configure(path, mode, port, ask=input, secret=getpass.getpass):
+def require_new_config(path):
     if path.exists() or path.is_symlink():
         raise ValueError('配置文件已存在，已保留原文件。请在服务器私下编辑，不要粘贴到聊天。')
+
+
+def write_config(path, mode, port, *, origin, base, model, key, thinking=None,
+                 daily_limit='30', reconfirm_days='7'):
+    require_new_config(path)
+    if mode not in ('private', 'production'):
+        raise ValueError('部署模式不正确')
     if not 1024 <= port <= 65535:
         raise ValueError('端口范围应为1024至65535')
-    if secret is getpass.getpass and not sys.stdin.isatty():
-        raise ValueError('请在交互式服务器终端运行configure，以便隐藏输入密钥')
-    origin = f'http://127.0.0.1:{port}' if mode == 'private' else https_url(ask('正式HTTPS入口（不含页面路径）：').strip(), True)
-    print('默认模型：百炼北京地域的 qwen-plus。可使用控制台提供的业务空间专属地址。')
-    base = https_url(ask(f'模型 Base URL [回车使用北京兼容地址]：').strip() or BASE_URL)
-    model = ask('模型名称 [qwen-plus]：').strip() or 'qwen-plus'
+    origin = f'http://127.0.0.1:{port}' if mode == 'private' else https_url(origin, True)
+    base = https_url(base)
     if not re.fullmatch(r'[A-Za-z0-9_./:-]{1,160}', model):
         raise ValueError('模型名称格式不正确')
-    key = secret('模型 API Key（隐藏输入；回车暂不接入）：').strip()
     if key and not re.fullmatch(r'[A-Za-z0-9_.-]{8,512}', key):
         raise ValueError('密钥格式不正确；不要输入引号、空格或整段配置')
-    thinking = 'false' if model == 'qwen-plus' and (urlsplit(base).hostname == 'dashscope.aliyuncs.com' or urlsplit(base).hostname.endswith('.maas.aliyuncs.com')) else ''
+    if thinking is None:
+        thinking = 'false' if model == 'qwen-plus' and (urlsplit(base).hostname == 'dashscope.aliyuncs.com' or urlsplit(base).hostname.endswith('.maas.aliyuncs.com')) else ''
+    if thinking not in ('', 'false', 'true'):
+        raise ValueError('思考模式只接受true、false或留空')
+    if not re.fullmatch(r'[0-9]{1,4}', str(daily_limit)) or not 1 <= int(daily_limit) <= 1000:
+        raise ValueError('每日调用次数范围为1至1000')
+    if not re.fullmatch(r'[0-9]{1,2}', str(reconfirm_days)) or not 1 <= int(reconfirm_days) <= 30:
+        raise ValueError('食材重确认天数范围为1至30')
     data = {
         'BOOTSTRAP_TOKEN': secrets.token_urlsafe(48), 'APP_DB': '/data/family.sqlite3',
         'APP_PORT': str(port), 'PUBLIC_ORIGIN': origin,
         'COOKIE_SECURE': 'false' if mode == 'private' else 'true', 'DEMO_MODE': 'false',
         'MODEL_API_KEY': key, 'MODEL_BASE_URL': base, 'MODEL_ID': model,
-        'MODEL_ENABLE_THINKING': thinking, 'MODEL_DAILY_REQUEST_LIMIT': '30',
+        'MODEL_ENABLE_THINKING': thinking, 'MODEL_DAILY_REQUEST_LIMIT': str(int(daily_limit)),
+        'PANTRY_RECONFIRM_DAYS': str(int(reconfirm_days)),
     }
     # O_EXCL prevents concurrent or accidental overwrite, including symlinks.
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -69,6 +79,39 @@ def configure(path, mode, port, ask=input, secret=getpass.getpass):
     if mode == 'private':
         print('当前为SSH隧道内的私人测试配置，不是家人的微信正式入口。')
     return data
+
+
+def configure(path, mode, port, ask=input, secret=getpass.getpass):
+    require_new_config(path)
+    if not 1024 <= port <= 65535:
+        raise ValueError('端口范围应为1024至65535')
+    if secret is getpass.getpass and not sys.stdin.isatty():
+        raise ValueError('请在交互式服务器终端运行configure，以便隐藏输入密钥')
+    origin = f'http://127.0.0.1:{port}' if mode == 'private' else https_url(ask('正式HTTPS入口（不含页面路径）：').strip(), True)
+    print('默认模型：百炼北京地域的 qwen-plus。可使用控制台提供的业务空间专属地址。')
+    base = https_url(ask(f'模型 Base URL [回车使用北京兼容地址]：').strip() or BASE_URL)
+    model = ask('模型名称 [qwen-plus]：').strip() or 'qwen-plus'
+    key = secret('模型 API Key（隐藏输入；回车暂不接入）：').strip()
+    return write_config(path, mode, port, origin=origin, base=base, model=model, key=key)
+
+
+def configure_unattended(path, mode, port, environ=None):
+    """Use an explicitly selected process environment; no prompts or secret output.
+
+    This does not source files, discover another project's credentials, contact a
+    provider, or connect to a server. Existing configuration is never replaced.
+    """
+    require_new_config(path)
+    env = os.environ if environ is None else environ
+    return write_config(
+        path, mode, port, origin=env.get('PUBLIC_ORIGIN', '').strip(),
+        base=env.get('MODEL_BASE_URL', '').strip() or BASE_URL,
+        model=env.get('MODEL_ID', '').strip() or 'qwen-plus',
+        key=env.get('MODEL_API_KEY', '').strip(),
+        thinking=env.get('MODEL_ENABLE_THINKING'),
+        daily_limit=env.get('MODEL_DAILY_REQUEST_LIMIT', '30'),
+        reconfirm_days=env.get('PANTRY_RECONFIRM_DAYS', '7'),
+    )
 
 
 def read_env(path):
@@ -149,11 +192,14 @@ def main():
     setup = sub.add_parser('configure')
     setup.add_argument('--mode', choices=['private', 'production'], default='private')
     setup.add_argument('--port', type=int, default=18080)
+    setup.add_argument('--non-interactive', action='store_true',
+                       help='create a new private config from selected environment variables without prompting; never prints secrets')
     sub.add_parser('check')
     args = parser.parse_args()
     try:
         if args.command == 'configure':
-            configure(ROOT / '.env', args.mode, args.port)
+            action = configure_unattended if args.non_interactive else configure
+            action(ROOT / '.env', args.mode, args.port)
             return 0
         return 0 if preflight(ROOT / '.env') else 1
     except (ValueError, OSError, EOFError, KeyboardInterrupt) as exc:

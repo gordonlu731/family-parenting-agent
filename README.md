@@ -1,6 +1,6 @@
 # 小芽家庭育儿助手
 
-手机网页开发试用版 0.3.1。供一个家庭通过独立身份，共同维护宝宝档案、菜单和实际进食记录。正式目标是微信中打开链接使用；此包尚未部署上线，也未完成微信真机验收。
+手机网页开发试用版 0.3.2。供一个家庭通过独立身份，共同维护宝宝档案、菜单和实际进食记录。正式目标是微信中打开链接使用；此包尚未部署上线，也未完成微信真机验收。
 
 ## 项目资料入口
 
@@ -14,11 +14,12 @@
 | 已确定的方案、建议和待定事项 | [DECISIONS.md](docs/DECISIONS.md) |
 | 开发顺序、可立即开展的任务和验收条件 | [ROADMAP.md](docs/ROADMAP.md) |
 | 下一项具体工作及接手步骤 | [HANDOFF.md](docs/HANDOFF.md) |
+| 已授权的部署顺序与实际条件 | [DEPLOYMENT_PLAN.md](docs/DEPLOYMENT_PLAN.md) |
 | 实际检查结果与验收缺口 | [VERIFICATION.md](docs/VERIFICATION.md) |
 | 页面回归与可执行模型评测 | [READINESS.md](docs/READINESS.md) |
 | 自动备份、监测与升级回滚准备 | [OPERATIONS.md](docs/OPERATIONS.md) |
 
-最近需求：回看历史计划和实际进食，维护全家共享食材，结合反馈推荐菜单，再按家中余量生成采购缺口。历史回看、共享食材、带家庭资料的推荐及采购缺口计算均已有首版实现；桌面/手机尺寸的独立浏览器回归已跑通；真实模型效果与微信体验待验收。 ECS手动部署暂停，等待外部自动执行链路；本地开发与模拟验证可继续。
+最近需求：回看历史计划和实际进食，维护全家共享食材，结合反馈推荐菜单，再按家中余量生成采购缺口。历史回看、共享食材、带家庭资料的推荐及采购缺口计算均已有首版实现；桌面/手机尺寸的独立浏览器回归已跑通；真实模型效果与微信体验待验收。 用户已授权开始ECS部署；当前会话尚未挂载已打通环境的SSH身份，实际连接与部署未执行，见DEPLOYMENT_PLAN。
 
 ## 已实现
 
@@ -70,7 +71,7 @@ npm run dev
 
 ## 自动验证与后续接入
 
-GitHub Verify在main推送、PR或手工触发时运行构建/后台模拟测试、独立桌面与手机尺寸浏览器回归，以及专用临时容器/卷的镜像与运维检查。统一入口为bash scripts/verify.sh，不调用真实模型或连接ECS。模型场景验收清单见evals/README.md，自动执行链路接入要求见docs/AUTOMATION_HANDOFF.md。当前ECS手动部署暂停，等待自动链路准备完成。CI不接ECS、不调用真实模型、不发布镜像；浏览器截图仅为虚构数据，保留7天。
+GitHub Verify在main推送、PR或手工触发时运行构建/后台模拟测试、独立桌面与手机尺寸浏览器回归，以及专用临时容器/卷的镜像与运维检查。统一入口为bash scripts/verify.sh，不调用真实模型或连接ECS。模型场景验收清单见evals/README.md，自动执行链路接入要求见docs/AUTOMATION_HANDOFF.md。部署暂停已解除，执行者应使用现有连通的SSH环境；不要求另建CI部署链路。CI不接ECS、不调用真实模型、不发布镜像；浏览器截图仅为虚构数据，保留7天。
 
 ## 构建与验证
 
@@ -85,7 +86,7 @@ npm test
 
 ## 服务器试用准备
 
-先按 [首次试运行指南](docs/FIRST_RUN.md) 操作。`python3 scripts/deploy.py check` 仅检查Docker、磁盘、端口及配置，不调用模型或安装软件。`configure` 交互式生成权限600的.env，隐藏输入API Key，拒绝覆盖已有配置。默认qwen-plus，使用百炼北京地域兼容地址；该模型服务地域不由ECS地域决定，API Key须与服务地址对应。
+先按 [完整部署计划](docs/DEPLOYMENT_PLAN.md) 与 [首次试运行指南](docs/FIRST_RUN.md) 推进。`python3 scripts/deploy.py check` 仅检查Docker、磁盘、端口及配置，不调用模型或安装软件。`configure` 交互式生成权限600的.env，隐藏输入API Key，拒绝覆盖已有配置。已有SSH环境可运行`configure --non-interactive`，从安全配置的进程变量生成新文件，不需要终端交互；缺密钥先部署手工记录。默认qwen-plus，使用百炼北京地域兼容地址；该模型服务地域不由ECS地域决定，API Key须与服务地址对应。
 
 `python scripts/check_model.py --call-model` 是显式付费连通测试，只发送固定测试句，不读取家庭数据库。该操作须在配置好模型环境的容器内执行，不会因运行check而自动触发。
 

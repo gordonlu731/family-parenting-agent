@@ -1,82 +1,61 @@
 # 首次私人试运行
 
-适用版本0.2.1。用户已有至少4GB的上海ECS、暂无域名。本指南先做管理员私下测试；微信家庭入口、HTTPS和发布条件后续完成。当前没有访问用户服务器，也未部署或连接真实模型。
+适用版本0.3.2；更新2026年11月14日。用户已确认ECS连接打通并授权部署。执行者在已有SSH环境按DEPLOYMENT_PLAN自主操作，只有缺账号、入口或真实设备时再找用户。当前会话未挂载SSH身份，以下仍未在用户ECS执行。
 
-## 1 先看服务器环境
+## 先核实已有服务器
 
-在ECS终端分别执行下面五行，把输出反馈给开发者即可，不包含密钥：
+通过现有SSH配置检查当前用户、系统/Python、内存磁盘、Docker/Compose权限、已有服务及18080端口。用户已提供Docker/Compose安装成功记录，不要求重复安装或重新上传私钥。不读取量化业务资料，不改动其容器、端口、目录和数据。
 
-```bash
-cat /etc/os-release
-python3 --version
-docker --version
-docker compose version
-free -m
-```
+## 固定代码与首次配置
 
-不因命令缺失就直接安装；先根据系统和既有项目确认安装方式。不要把ECS密码、SSH私钥、.env或模型API Key发到聊天。已有量化服务保持原有配置，育儿助手单独存放。
+在独立目录检出本次已确认完整SHA，检查对应Verify结果。已有.env或数据库必须保留；不拿旧ZIP覆盖现有Git版本。
 
-## 2 准备代码和密钥
-
-将源码ZIP上传到ECS的独立目录并解压，进入family-parenting-agent目录。不要覆盖旧版.env或数据库。下面的部署工具只需Python标准库；本包构建前端的Docker步骤另需访问镜像及依赖源，具体在ECS验证。
-
-默认使用阿里云百炼北京地域的qwen-plus普通业务API，Base URL为 `https://dashscope.aliyuncs.com/compatible-mode/v1`；官方仍兼容此地址，同时推荐业务空间专属地址。配置工具允许粘贴控制台给出的完整Base URL。百炼API Key和服务地址必须在对应地域，ECS在上海不表示百炼也选上海。模型可用性和费用以实际账号为准。
-
-参考官方文档：
-- [兼容接口与地域](https://help.aliyun.com/zh/model-studio/compatibility-of-openai-with-dashscope)
-- [获取API Key](https://help.aliyun.com/zh/model-studio/get-api-key)
-- [JSON结构化输出](https://help.aliyun.com/zh/model-studio/qwen-structured-output)
-
-确认Docker与Compose可用后，在交互式终端执行：
+无人值守首次生成私人配置：
 
 ```bash
-python3 scripts/deploy.py configure --mode private
+python3 scripts/deploy.py configure --non-interactive --mode private
 python3 scripts/deploy.py check
 ```
 
-按提示输入密钥时屏幕不会显示字符；可以留空，先只试手工记录。配置工具不覆盖已有.env，不调用模型、不启动服务。默认端口18080、每天全家30次调用；端口占用时先确认是否本项目已运行，再决定是否另选端口。
+这只在.env不存在时成功；权限600、生成新的随机初始化凭证，默认绑定回环18080、关闭演示，每日全家30次模型尝试。没有MODEL_API_KEY也可先部署手工记录，不会调用模型。生产模式另需已验证HTTPS入口；选定变量及说明见DEPLOYMENT_PLAN，不把.env当Shell脚本source执行。
 
-`check`输出可发给开发者；.env内容不要截图或复制到聊天。它只检查运行条件，不验证模型凭证、证书、对外网络、ICP备案或微信体验。不要将.env当Shell脚本source执行。
+如果由用户在服务器私下输入配置，也保留原交互入口：
 
-## 3 构建并做一次模型测试
+```bash
+python3 scripts/deploy.py configure --mode private
+```
+
+交互输入密钥隐藏显示，可留空；现有.env拒绝覆盖。不要把密钥、初始化凭证、.env或SSH私钥粘贴到聊天或公开Git。模型默认百炼北京兼容地址和qwen-plus，仅为已有可配置默认值；实际地域、权限和模型能力必须在真实接入时验证，不能根据ECS地域推断API地域。
+
+## 构建和启动
+
+在预检通过且确认没有覆盖现有部署后：
 
 ```bash
 docker compose -p family-parenting-agent build
+docker compose -p family-parenting-agent up -d
+docker compose -p family-parenting-agent ps
+curl --fail --silent --show-error http://127.0.0.1:18080/api/health
 ```
 
-可选的真实模型连通测试会发起一次可能收费的合成样例请求，不读取宝宝资料，不计入应用内家庭每日次数。仅在需要且配置完整时执行：
+本项目只绑定主机127.0.0.1:18080，数据使用独立持久卷；没有公网家庭网址。确认实际容器健康，核实重启策略及卷，不能将CI容器测试记成ECS启动成功。已有部署先按OPERATIONS完成备份和隔离恢复，不重复创建卷或删除旧配置。
+
+## 模型与私人浏览器验证
+
+配置完整时，执行1次合成JSON连通测试；然后按DEPLOYMENT_PLAN运行少量隔离评测，遇错误先修复，不自动连续重试收费请求。
 
 ```bash
 docker compose -p family-parenting-agent run --rm --no-deps app python scripts/check_model.py --call-model
 ```
 
-测试通过只证明HTTPS及JSON模式可用，不证明育儿场景质量。qwen-plus默认关闭思考模式；其他模型须核对是否支持该参数。结构化生成保留输出长度上限控制单次调用规模，若被截断则明确失败，不写记录或发布菜单；真实菜单验收时需检查1/3/7天长度。
+只证明HTTPS与JSON模式连通，不证明菜单质量。模型验收不打开实际家庭数据库，不计入应用内每日次数；记录请求数和使用量，不能宣称人民币硬封顶。
 
-然后启动此项目：
+暂时没有域名时，通过现有SSH连接建立到回环18080的私人隧道。隧道客户端可打开http://127.0.0.1:18080；这只供私人测试，不是微信家庭入口。隔离测试使用虚构资料，正式家庭由家长核实当前月龄和过敏后再初始化，不从历史聊天自动导入。
 
-```bash
-docker compose -p family-parenting-agent up -d
-docker compose -p family-parenting-agent ps
-```
+## 给家人使用前
 
-本项目仅绑定主机127.0.0.1:18080，未开放公网安全组。健康检查成功不表示模型可用。以上命令尚未在用户ECS执行，镜像下载、依赖安装和运行结果以实际服务器为准。
+核实可复用的稳定HTTPS入口并配置PUBLIC_ORIGIN、COOKIE_SECURE=true；没有入口则保留私人运行并报告缺口，不临时把明文HTTP开放公网代替。入口改变后用原项目名和卷重新创建容器使配置生效。
 
-## 4 无域名时从自己的电脑测试
+创建并实际校验备份/恢复/监测，再按部署路径核对并安装本项目定时模板。异机加密状态单独记录，详情见OPERATIONS。至少两部微信设备完成身份、邀请/恢复、刷新保持、共享、输入和保存；录音仍只是兼容测试，ASR/TTS尚未实现。
 
-在自己的电脑终端建立SSH隧道，把用户名和IP换成ECS现有登录信息：
-
-```text
-ssh -N -L 18080:127.0.0.1:18080 ECS用户名@ECS公网IP
-```
-
-保持该终端连接，在同一电脑浏览器打开 `http://127.0.0.1:18080`。这只通过现有SSH登录提供私人访问，不是微信中可给全家使用的网址，不新增公开Web端口。
-
-在服务器私下查看.env里的初始化凭证，输入页面的“创建我的家庭”。不向其他人转发该凭证；完成后创建接口不能重复建立家庭。首次使用核实宝宝当前月龄和过敏情况，不沿用旧聊天中的历史月龄。
-
-验证顺序：手工记一餐→刷新后仍在→第二浏览器独立加入→彼此看到同一记录→一句话整理后核对保存→生成一天菜单草稿→编辑并发布。录音仍只是兼容性测试。
-
-## 5 给家人使用前
-
-私人测试完成后，再配置稳定域名、HTTPS及部署所需手续，在.env中改为真实HTTPS PUBLIC_ORIGIN和COOKIE_SECURE=true，并让代理指向实际APP_PORT。修改模型或入口配置后用原项目名重新创建容器使配置生效。家人通过正式地址各自的邀请链接加入，做真实微信验证。
-
-模型密钥失效时手工记录仍可用。数据在持久化卷，不能以删除卷方式修复问题。若已有旧部署，先确认原项目名、卷和端口并完成一致性备份，继续沿用原持久化数据；当前包不自动迁移到另一台服务器或另一个Compose项目。
+给用户私密交付初始化办法与家庭统一入口；初始化凭证不进公开回执。管理员确认真实档案后邀请家人，不在验收中自动发布真实菜单。模型失效时保留手工记录，不能以删除持久卷方式修复问题。
