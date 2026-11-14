@@ -22,6 +22,29 @@ class ReviewTest(unittest.TestCase):
     def review(self, start=DAY, end=DAY, client=None):
         return (client or self.owner).get('/api/review', params={'start': start, 'end': end})
 
+    def test_history_copy_uses_create_conflicts_permissions_and_unknown_amounts(self):
+        self.confirm_profile()
+        original=self.save_menu()
+        self.post_record()
+        actual=self.owner.get('/api/records').json()
+        stock=self.owner.get('/api/pantry').json()
+        tomorrow=(date.fromisoformat(DAY)+timedelta(days=1)).isoformat()
+        body={k:original[k] for k in ('title','ingredients','method','note')}
+        body.update(day=tomorrow,meal='晚餐',version=0)
+        caregiver,_,_=self.caregiver()
+        self.assertEqual(caregiver.put('/api/menus',json=body).status_code,403)
+        headers={'Idempotency-Key':'history-copy'}
+        saved=self.owner.put('/api/menus',json=body,headers=headers)
+        self.assertEqual(saved.status_code,200)
+        self.assertEqual(self.owner.put('/api/menus',json=body,headers=headers).json(),saved.json())
+        self.assertEqual(self.owner.put('/api/menus',json=body,headers={'Idempotency-Key':'competing-copy'}).status_code,409)
+        self.assertEqual(self.owner.get('/api/records').json(),actual)
+        self.assertEqual(self.owner.get('/api/pantry').json(),stock)
+        self.assertEqual(self.review().json()['days'][0]['meals'][1]['menu']['id'],original['id'])
+        shopping=self.owner.get('/api/shopping',params={'start':tomorrow,'end':tomorrow}).json()
+        self.assertTrue(shopping['items'])
+        self.assertTrue(all(i['category']=='check' for i in shopping['items']))
+
     def save_menu(self, **changes):
         response = self.owner.put('/api/menus', json=self.menu_payload(**changes),
                                   headers={'Idempotency-Key': mod.uid()})

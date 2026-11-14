@@ -1,3 +1,9 @@
+## 当前0.3.3实施快照
+
+已同步cfc0b4f，复核ECS e1a4992回环健康、main a3f9d43。项目缺MODEL_API_KEY，真实请求0/8；没有现成HTTPS代理或443监听。历史复用和用户定时运维已实现，正在测试/发布。最终实机结果见VERIFICATION。正式数据/HTTPS交接见[FAMILY_TRIAL_HANDOFF](FAMILY_TRIAL_HANDOFF.md)。
+
+## 以下为历史快照，不是现行待办
+
 ## 2026-11-14 下一轮业务里程碑（规划）
 
 完整任务及完成条件见[NEXT_CODEX_TASK.md](NEXT_CODEX_TASK.md)，部署前置不重做。

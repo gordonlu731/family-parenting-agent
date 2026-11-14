@@ -1,3 +1,9 @@
+## 当前0.3.3实施快照
+
+已同步cfc0b4f，复核ECS e1a4992回环健康、main a3f9d43。项目缺MODEL_API_KEY，真实请求0/8；没有现成HTTPS代理或443监听。历史复用和用户定时运维已实现，正在测试/发布。最终实机结果见VERIFICATION。正式数据/HTTPS交接见[FAMILY_TRIAL_HANDOFF](FAMILY_TRIAL_HANDOFF.md)。
+
+## 以下为历史快照，不是现行待办
+
 ## 2026-11-14 下一轮持续业务任务
 
 后续优先执行[NEXT_CODEX_TASK.md](NEXT_CODEX_TASK.md)：复用已运行的native-user-service，完成真实模型/文字闭环、历史菜单复用、本用户备份定时与监测、正式入口及数据交接准备。缺模型或域名时继续独立工作，不回退为重新配置SSH/Docker。该任务是规划，不表示这些新增工作已完成。
