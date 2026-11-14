@@ -56,7 +56,9 @@ def write_config(path, mode, port, *, origin, base, model, key, thinking=None,
     if key and not re.fullmatch(r'[A-Za-z0-9_.-]{8,512}', key):
         raise ValueError('密钥格式不正确；不要输入引号、空格或整段配置')
     if thinking is None:
-        thinking = 'false' if model == 'qwen-plus' and (urlsplit(base).hostname == 'dashscope.aliyuncs.com' or urlsplit(base).hostname.endswith('.maas.aliyuncs.com')) else ''
+        host = urlsplit(base).hostname
+        thinking = 'false' if (host == 'api.deepseek.com' or (model == 'qwen-plus' and
+            (host == 'dashscope.aliyuncs.com' or host.endswith('.maas.aliyuncs.com')))) else ''
     if thinking not in ('', 'false', 'true'):
         raise ValueError('思考模式只接受true、false或留空')
     if not re.fullmatch(r'[0-9]{1,4}', str(daily_limit)) or not 1 <= int(daily_limit) <= 1000:

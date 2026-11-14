@@ -1,3 +1,9 @@
+## 0.3.3 原生用户服务运维
+
+scripts/user_operations.py install需指定--root、--data-dir、--backup-dir，只写当前用户unit。先在线备份/校验/隔离恢复/check，再执行backup和check两项oneshot成功才启用timer。每日上海03:15备份（随机延迟最多5分钟，Persistent），每小时监测，保留14份。换发布目录后重新install更新路径并保留旧unit；不重启健康应用，不发通知。
+
+用systemctl --user list-timers family-parenting-agent-*查看下一次触发；用show对应service的Result/ExecMainStatus查看结果。失败退出非零，日志私下查看。正式库切换时同步更新独立备份目录。以下Docker模板是历史通用方案，当前原生服务不能照抄执行。
+
 # 备份、监测与升级回滚准备
 
 更新：2026年11月14日，应用0.3.2。用户已授权部署；当前会话缺少SSH身份，仍未连接ECS、安装定时器或启用通知。执行顺序见DEPLOYMENT_PLAN。

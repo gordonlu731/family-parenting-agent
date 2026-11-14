@@ -1,3 +1,70 @@
+# 2026-11-15 DeepSeek官方适配（源码0.3.4，未部署）
+
+- 用户在来源选择中明确确认DeepSeek官方平台。核对官方quick start、Chat Completions、JSON和models文档；当前推荐ID为deepseek-flash，官方思考字段为thinking.type，默认模式与本项目短JSON工作流需显式区分。
+- 官方host的共享开关转为thinking.type=disabled/enabled，留空默认disabled；其他供应商保留原参数，模型名不用于猜平台。新配置选择官方host默认false。
+- 本地TypeScript/Vite构建及114项测试通过，新增3项覆盖官方配置默认、开关映射/其他供应商不回归、模拟官方端点的合成JSON成功/空白失败与仅一次请求。所有HTTP为MockTransport，真实调用0。
+- 补DEEPSEEK_SETUP：一次安全输入、仅更新模型字段、匹配源码、模型列表核实、1次连通及核心场景，仍受全轮8次总限额。API Key未提供，本会话没有ECS登录、配置修改、模型费用或业务数据写入。
+- 源码应用版本0.3.4，无数据库迁移；实际ECS仍0.3.3/86f3f29。后续独立CI结果按本次提交查看，不将模拟结果写成真实模型或微信已通过。
+
+# 2026-11-15 HTTPS启动配置兼容检查（未部署）
+
+- 复核部署分支ae76511、0.3.3发布回执和最新Verify43606221440 success，当前服务/108测试等结论来自既有ECS记录，本会话没有重新登录ECS。
+- 修复user_service.environment仅接受私人HTTP的问题；支持有效HTTPS origin且COOKIE_SECURE=true。固定回环监听、私有配置/数据权限、数据库路径和环境白名单保持。
+- 新增3项测试：HTTPS模式有效且不修改配置/数据、11种不安全或含糊组合调用前拒绝、隔离子进程加载真实ASGI应用检查安全Cookie/登录/Origin/CSRF。使用临时虚构数据库，模型请求0。不是证书、代理或微信验收。
+- 本地初次统一构建因新worktree未装TypeScript而失败；离线npm安装因缺缓存失败。核对依赖锁定条目完全相同后复用当前电脑已有依赖，没有请求注册源或改依赖版本。最终本地TypeScript/Vite构建和111项测试通过。
+- 无迁移、无业务API变更，不升级应用语义版本；本次补丁尚未部署，ECS仍86f3f29。独立CI须看本次对应提交，不以旧运行替代。未切换PUBLIC_ORIGIN、未创建证书、未改系统/公网、未初始化或更改家庭资料。
+
+# 2026-11-14 本轮0.3.3发布实证
+
+- 开始同步远程部署分支到cfc0b4f；main a3f9d43、原ECS e1a4992、工作分支独立核对。未重新验收SSH系统隔离或配置Docker，不操作量化项目。PR #1说明已改为实际部署/业务/运维范围，保持Draft。
+- 最终运行代码86f3f29332cb93c615e52a618d5f592402ff37de，应用0.3.3，无schema变更。新私有发布目录/venv保留旧代码、配置和unit，原虚构验收库不删不重建。
+- 本地构建及108项合成测试通过；ECS最终版本构建及108项测试通过。所有测试用独立临时虚构数据库与模拟HTTP；两照顾者食材→推荐→核对/替换→采购→买后总量→实际→回看完整闭环、未知量/单位/熟食/陈旧/冲突/故障回归均通过，不是实供模型验收。
+- [Verify43605931277](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43605931277) build-and-test/browser/container全部success。桌面1440×1000、手机390×844实际页面交互覆盖历史复用草稿确认、目标冲突、原菜单/记录保留、照护者无发布入口，及既有共享/采购/刷新登录流程。
+- 早期43605495466、43605736738的browser超时保留：新增目标餐次select隐式标签含选项，精确定位失败。补显式aria-label后通过，未放宽业务断言。合成截图产物生成；当前网络拒绝产物下载，未声称人工看过截图。浏览器桥接ASGI，不证明真实HTTPS或微信。
+- 项目安全配置中MODEL_API_KEY为空；BASE_URL/ID存在。未读取其他项目凭据，未发实供请求（本轮总计0/8）。ECS四条核心mock评测通过，只验证评测工具，费用无实供发生、真实质量人审未做。
+- 更新前在线备份/校验及隔离恢复通过，部署后health200、active/enabled、仅127.0.0.1:18080；实际所服务JS逐字节匹配当前构建且含新历史复用入口。families/members/profiles/records/menus/pantry业务摘要与更新前一致。没有重新初始化、写真实档案或用恢复副本覆盖原库。
+- 用户backup/check service先手动成功后启用timer，更新到最终代码路径；Result=success、ExecMainStatus=0。linger=yes，每小时监测、每日上海03:15+最多5分钟随机延迟备份，保留14份。本次最后观察下一次监测23:40左右、备份次日03:15左右。运维安装前后应用PID不变；不向任何人通知。
+- 定时备份/监测资源限制128MiB、25%CPU、16任务、120秒；NoNewPrivileges、UMask0077。文件600/目录700，旧unit按摘要保留，备份含校验清单、恢复检查和只读监测正常。仍为本机明文；未测未来定时触发或异机灾备。
+- 只读检查未见活动caddy/nginx/apache或443监听；项目正式数据目录仅预留700空目录，无DB、无初始化、无切换。HTTPS管理员审阅配置/私人访问/正式数据独立身份与回退/微信短清单见FAMILY_TRIAL_HANDOFF。
+
+外部缺口仅有本项目模型Key及匹配账号配置、确定域名和HTTPS管理员操作授权、专属异机加密存储/身份/恢复保管，以及真实家长/微信设备参与。未动系统权限/安全组/公网。下面为此前历史，不作当前结论。
+
+## 2026-11-14 晚间GitHub状态复核与任务规划
+
+- main为a3f9d4318ec402214f8f6282dd6ed47dd8af5707；Draft PR #1的head为0d30c3dd4042ed9753192b2c0f1903a180999b2b，尚未合并；最新提交只记录实机回执，部署代码为e1a499296952cd86e94a8cd34a5aa10aac8430b5。
+- [Verify43602102700](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43602102700)的build-and-test、browser和container均completed/success；读取STATUS、HANDOFF、USER_DEPLOYMENT和下文实机回执，区分最新记录与旧历史。
+- 本轮仅核对远程和编制NEXT_CODEX_TASK，无新的ECS登录、业务修改、模型调用或微信测试；106项及ECS验收结论引用部署分支已有记录，非本会话重新执行。
+- 文档变更不升应用版本；没有合并Draft、修改系统权限、读取家庭数据或部署新服务。后续新增工作均标为规划。
+
+## 2026-11-14 ECS native-user-service实际验收
+
+- 固定部署提交：`e1a499296952cd86e94a8cd34a5aa10aac8430b5`，应用0.3.2。
+  [Verify43601672798](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43601672798)成功；ECS构建、106项合成测试通过。
+- 真实专属SSH、PTY、源码/依赖传输哈希、Python3.12、Node22、SQLite/venv、用户瞬态服务通过；
+  manager及linger启用，进程位于本用户slice，实际内存/CPU/任务数/swap限制核对通过。
+- 跨项目目录/只读视图、系统凭据和宿主机Docker均EACCES；sudo非交互执行拒绝。
+  两个IPv4元数据地址与无关本机端口TCP connect返回EHOSTUNREACH，未发HTTP元数据请求、未获取凭据。
+  guard活动且成功；nft计数证据来自管理员成功回执，普通用户本轮无读取权限。
+  IPv6无路由和链路探测超时只记录为未知，不作为独立内核阻断证明。
+- 服务active/enabled，仅127.0.0.1:18080；应用512MiB/75%/128任务、NoNewPrivileges，用户slice更外层限制仍在；OOM计数0。
+- 真实HTTP虚构家庭：两成员共享，匿名拒绝、CSRF/Origin拒绝、邀请单次使用、重试幂等、
+  档案/食材/手工菜单/进食/回看/采购读取通过；静态入口未提供配置令牌或SQLite文件。
+- 重启后两身份读回相同内容；在线备份含校验清单，restore-check通过；恢复至独立私有数据库，
+  临时在相同回环端口提供服务并用原会话读取核对，随后切回原服务；原库业务摘要保持一致。
+  撤销一个虚构成员后其会话401，管理员仍可用；最终再备份、恢复检查与只读监测通过。
+- 配置/DB/备份文件600，目录700。现场私密验收脚本、备份与摘要留ECS，不提交数据库、令牌或日志正文。
+
+保留首次unit安装失败现场：真实systemd拒绝引号WorkingDirectory，已去除重复字段，启动器负责chdir；
+新增真实systemd解析器测试覆盖含空格/%的路径。验收脚本首次DELETE缺Content-Type返回415，
+仅修正脚本请求头，保留同一虚构家庭续跑后通过，没有删除或重建数据库。
+未作真实模型、异机加密备份、定时器、正式公网HTTPS或微信验收。以下为历史记录。
+
+## 2026-11-14 用户服务离线验证
+
+本地npm构建、105项后台/运维测试通过，新增5项验证用户unit、配置隔离、私有权限、
+DB宿主机路径、systemd参数转义和root拒绝。原不安全权限测试补显式chmod，适配umask077。
+未启动ECS服务或真实模型，Rootless/SSH/容器隔离验收仍须真实新身份；代码通过不代表部署。
+
 # 验证记录与当前证据
 
 当前应用0.3.2；最后整理日期2026年11月14日。下文保留历史检查，旧日期/版本不代表最新状态。

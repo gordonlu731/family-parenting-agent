@@ -17,7 +17,7 @@ const shiftDay=(day:string,n:number)=>{
 };
 const timeLabel=(value:string)=>new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(value));
 
-export function ReviewContent({data,onRecord}:{data:ReviewData;onRecord:OpenRecord}){
+export function ReviewContent({data,onRecord,onReuse}:{data:ReviewData;onRecord:OpenRecord;onReuse?:(menu:ReviewMenu)=>void}){
   return <>
     <p className="review-note">{data.note}</p>
     <div className="review-stats" aria-label="所选范围记录概况">
@@ -38,13 +38,13 @@ export function ReviewContent({data,onRecord}:{data:ReviewData;onRecord:OpenReco
             <button className="text-button" onClick={()=>onRecord(day.day,slot.meal,entry)}>更正这条记录</button>
           </div>):<p className="muted">还没有实际进食记录，可补记。</p>}</div>
         </div>
-        <div className="review-actions"><button className="secondary" onClick={()=>onRecord(day.day,slot.meal)}>{slot.has_records?'补充实际记录':'补记这一餐'}</button>{slot.menu&&<button className="text-button" onClick={()=>onRecord(day.day,slot.meal,undefined,slot.menu!)}>参考菜单填写</button>}</div>
+        <div className="review-actions">{slot.menu&&onReuse&&<button className="secondary" onClick={()=>onReuse(slot.menu!)}>复用这餐菜单</button>}<button className="secondary" onClick={()=>onRecord(day.day,slot.meal)}>{slot.has_records?'补充实际记录':'补记这一餐'}</button>{slot.menu&&<button className="text-button" onClick={()=>onRecord(day.day,slot.meal,undefined,slot.menu!)}>参考菜单填写</button>}</div>
       </article>)}
     </section>)}
   </>;
 }
 
-export function Review({api,today,revision,onRecord}:{api:Api;today:string;revision:number;onRecord:OpenRecord}){
+export function Review({api,today,revision,onRecord,onReuse}:{api:Api;today:string;revision:number;onRecord:OpenRecord;onReuse?:(menu:ReviewMenu)=>void}){
   const [end,setEnd]=useState(today),[span,setSpan]=useState(7),[data,setData]=useState<ReviewData|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(true),[retry,setRetry]=useState(0);
   const start=shiftDay(end,1-span);
   useEffect(()=>{
@@ -74,6 +74,6 @@ export function Review({api,today,revision,onRecord}:{api:Api;today:string;revis
     <p className="review-range">{start===end?end:`${start} — ${end}`} · 可补记，也可更正已有记录</p>
     {loading&&<p role="status">正在读取回看记录…</p>}
     {error&&<div className="error" role="alert">{error}<button className="text-button" onClick={()=>setRetry(n=>n+1)}>重新读取</button></div>}
-    {data&&!loading&&!error&&<ReviewContent data={data} onRecord={onRecord}/>}
+    {data&&!loading&&!error&&<ReviewContent data={data} onRecord={onRecord} onReuse={onReuse}/>}
   </section>;
 }

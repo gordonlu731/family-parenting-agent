@@ -1,4 +1,4 @@
-# Run Caddy on the HOST; the app container is bound to host loopback.
+# Administrator-reviewed HOST HTTPS proxy; native user app stays on loopback.
 your-domain.example {
     reverse_proxy 127.0.0.1:18080
     encode zstd gzip
