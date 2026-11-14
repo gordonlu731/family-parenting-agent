@@ -1,3 +1,23 @@
+## 2026-11-14 ECS私人回环试运行已验证
+
+应用仍为0.3.2，部署代码为 `e1a499296952cd86e94a8cd34a5aa10aac8430b5`。
+专属非root SSH及PTY、Python3.12、Node22、用户manager/linger与实际cgroup限制已检查；
+跨项目目录、系统凭据、宿主机Docker访问拒绝，IPv4元数据TCP连接返回内核拒绝错误。
+管理员安装回执包含nft计数验证；普通用户不能读取nft计数，本轮没有重新取得独立计数。
+IPv6探测无路由/超时不计为阻断证据，保留此验证限制。
+
+native-user-service已active/enabled，只监听127.0.0.1:18080，独立私有SQLite；
+应用MemoryMax512MiB、CPU75%、TasksMax128、NoNewPrivileges启用，未触发OOM。
+ECS构建及106项合成测试通过，对应GitHub Verify43601672798成功。
+两位虚构成员的共享、鉴权/CSRF/Origin、邀请单次有效、幂等、档案/食材/菜单/进食/回看/采购读取、
+重启持久化、成员独立撤销、一致性备份/校验和/隔离恢复均已实测。
+恢复副本临时作为回环服务读取验证后，已切回原库；运行库未被恢复覆盖。
+配置与DB文件600、数据/备份目录700；仅虚构数据，无模型调用、无公网开放。
+
+修复真实systemd不接受带引号WorkingDirectory的问题；启动器本身切换目录，新增真实解析器回归。
+备份仍为本机明文，未配置异机加密、备份定时器、正式HTTPS或微信真机验收。
+下方“未部署/缺SSH”的条目为此前历史状态，以本节和VERIFICATION最新记录为准。
+
 ## 2026-11-14 非root自主部署准备
 
 新增scripts/user_service.py作为Rootless不可用时的原生用户服务等效路径；只写当前用户unit，
