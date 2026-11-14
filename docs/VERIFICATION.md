@@ -1,3 +1,10 @@
+## 2026-11-14 晚间GitHub状态复核与任务规划
+
+- main为a3f9d4318ec402214f8f6282dd6ed47dd8af5707；Draft PR #1的head为0d30c3dd4042ed9753192b2c0f1903a180999b2b，尚未合并；最新提交只记录实机回执，部署代码为e1a499296952cd86e94a8cd34a5aa10aac8430b5。
+- [Verify43602102700](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43602102700)的build-and-test、browser和container均completed/success；读取STATUS、HANDOFF、USER_DEPLOYMENT和下文实机回执，区分最新记录与旧历史。
+- 本轮仅核对远程和编制NEXT_CODEX_TASK，无新的ECS登录、业务修改、模型调用或微信测试；106项及ECS验收结论引用部署分支已有记录，非本会话重新执行。
+- 文档变更不升应用版本；没有合并Draft、修改系统权限、读取家庭数据或部署新服务。后续新增工作均标为规划。
+
 ## 2026-11-14 ECS native-user-service实际验收
 
 - 固定部署提交：`e1a499296952cd86e94a8cd34a5aa10aac8430b5`，应用0.3.2。

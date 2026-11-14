@@ -1,3 +1,9 @@
+## 2026-11-14 最新核对与任务入口
+
+已读取部署分支0d30c3d的实机回执及Draft PR #1；最新[Verify43602102700](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43602102700)三个作业均success。main当前仍a3f9d43，不能仅读main旧说明判断未部署。本轮通过GitHub核对，未从本会话重新登录ECS。
+
+下一轮持续任务见[NEXT_CODEX_TASK.md](NEXT_CODEX_TASK.md)。真实模型、HTTPS/微信、自动/异机备份尚未完成；新增历史复用是本轮实施建议，不记作既有能力。当前应用仍0.3.2，实际部署代码仍以以下回执为准。
+
 ## 2026-11-14 ECS私人回环试运行已验证
 
 应用仍为0.3.2，部署代码为 `e1a499296952cd86e94a8cd34a5aa10aac8430b5`。
