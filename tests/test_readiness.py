@@ -58,6 +58,7 @@ class OperationsTest(unittest.TestCase):
         alias=Path(self.tmp.name)/'alias.db';alias.symlink_to(self.source)
         with self.assertRaises(operations.OperationError):operations.backup(alias,self.destination)
         self.destination.mkdir(mode=0o755)
+        self.destination.chmod(0o755)  # Keep the unsafe-permission fixture explicit even under umask 077.
         with self.assertRaises(operations.OperationError):operations.backup(self.source,self.destination)
 
     def test_retention_failure_keeps_the_new_complete_backup(self):

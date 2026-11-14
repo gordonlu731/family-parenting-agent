@@ -166,3 +166,5 @@ docker compose -p family-parenting-agent exec app python scripts/manage.py invit
 | docs/STATUS.md | 当前完成范围与验证限制 |
 
 本项目源码按维护者选择公开在独立仓库，与量化项目分开。数据库、密钥、真实录音和家庭资料不提交Git。
+
+非root原生部署后备路径与边界见[USER_DEPLOYMENT](docs/USER_DEPLOYMENT.md)。

@@ -1,3 +1,10 @@
+## 2026-11-14 非root自主部署准备
+
+新增scripts/user_service.py作为Rootless不可用时的原生用户服务等效路径；只写当前用户unit，
+回环18080、私有.env、独立DB、保留旧unit与数据，不用root Docker/sudo。5项新增合成测试，
+本地build与完整105项测试通过，真实ECS/模型/微信仍未验收。实际步骤见USER_DEPLOYMENT.md。
+旧测试一处受umask077影响，改为显式chmod构造不安全权限fixture；未放宽备份权限校验。
+
 # 当前开发状态
 
 更新：2026年11月14日（Asia/Shanghai）。应用版本：**0.3.2**。

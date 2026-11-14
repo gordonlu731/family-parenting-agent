@@ -1,3 +1,10 @@
+## 2026-11-14 最新部署接续
+
+管理员一次性准备新的独立非root开发身份；本轮尚未安装/注入，不能沿用其他项目的key。
+获得本项目SSH身份后，直接执行DEPLOYMENT_PLAN和USER_DEPLOYMENT：Rootless优先，
+不可用则原生systemd用户服务。保持数据/配置/卷与模式一致，初次无模型也可部署私人手工记录。
+新增工具与105测试合成通过；实际ECS/模型/HTTPS/微信仍待，不能重新建设部署审批通道。
+
 # 下一阶段开发交接
 
 更新：2026年11月14日，应用**0.3.2**，当前会话未执行ECS部署。先同步远程并保留本地改动，按AGENTS读取README、STATUS、CORE_SCENARIOS、DECISIONS、ROADMAP、DATA_RULES、READINESS、OPERATIONS与DEPLOYMENT_PLAN；不能只依赖旧聊天或ZIP。
