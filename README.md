@@ -17,6 +17,7 @@
 | 已授权的部署顺序与实际条件 | [DEPLOYMENT_PLAN.md](docs/DEPLOYMENT_PLAN.md) |
 | 实际检查结果与验收缺口 | [VERIFICATION.md](docs/VERIFICATION.md) |
 | 页面回归与可执行模型评测 | [READINESS.md](docs/READINESS.md) |
+| 换餐/两人流程诊断、零网络回放 | [OFFLINE_DIAGNOSTICS.md](docs/OFFLINE_DIAGNOSTICS.md) |
 | 已选DeepSeek官方接口与安全配置 | [DEEPSEEK_SETUP.md](docs/DEEPSEEK_SETUP.md) |
 | 自动备份、监测与升级回滚准备 | [OPERATIONS.md](docs/OPERATIONS.md) |
 

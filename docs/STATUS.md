@@ -2,6 +2,10 @@
 
 更新：2026年11月16日（Asia/Shanghai）。本次读取GitHub记录核对，未重新登录ECS；实际运行状态依据2026年11月15日Codex部署回执，详见[VERIFICATION](VERIFICATION.md)。旧阶段记录保留在验证历史，不作为当前待办。
 
+## 本轮已执行：诊断工具（2026-11-16，未在ECS运行）
+
+已增强evaluate.py：具名步骤/失败位置、可选私密回复即时保存、零网络离线回放；两人流程合成/回放通过31项检查。新增10项回归（含故障注入和网络构造拒绝），本地构建及125项测试通过。无新真实请求，原失败仍未定位/未声明修复。现场接续见[OFFLINE_DIAGNOSTICS](OFFLINE_DIAGNOSTICS.md)，计划见[NEXT_CODEX_TASK](NEXT_CODEX_TASK.md)。本会话没有family-dev身份挂载，不能读取原ECS私密现场；已有连接无需重建。
+
 ## 版本与运行
 
 - 应用0.3.5，部署源码f919554cc2e9462f34ac7e75baf261b5531e9d6b。最近记录为native-user-service active/enabled、health200、model_ready=true，仅127.0.0.1:18080。

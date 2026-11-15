@@ -2,6 +2,10 @@
 
 更新2026年11月16日。先读STATUS、VERIFICATION和本文件，再核对远程最新分支；旧的“缺Key/0次调用/未部署”是历史，不能作为当前阻塞。
 
+## 本轮工具已准备
+
+先执行[OFFLINE_DIAGNOSTICS](OFFLINE_DIAGNOSTICS.md)和新的[NEXT_CODEX_TASK](NEXT_CODEX_TASK.md)。evaluate.py现在给出具名步骤和相对源码失败位置；--replay不构造真实客户端，--capture-responses显式私密留存。合成两人流程/回放通过，不能据此宣称原失败修复。工具无需更新运行服务即可在独立源码/venv执行；本次没有读取ECS原现场或追加真实请求。
+
 ## 当前事实
 
 - 实际ECS应用0.3.5、源码f919554cc2e9462f34ac7e75baf261b5531e9d6b，已有native-user-service；记录为active/enabled、health200、model_ready=true，仅回环18080。工作分支和Draft PR #1未合并，main落后不代表服务落后。
