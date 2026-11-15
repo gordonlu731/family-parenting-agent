@@ -171,3 +171,5 @@ docker compose -p family-parenting-agent exec app python scripts/manage.py invit
 非root原生部署后备路径与边界见[USER_DEPLOYMENT](docs/USER_DEPLOYMENT.md)。
 
 0.3.3新增历史菜单复用和原生用户备份/监测定时工具；发布证据见STATUS，正式试用交接见[交接文档](docs/FAMILY_TRIAL_HANDOFF.md)。
+
+当前服务器已接入DeepSeek官方deepseek-flash（0.3.5/f919554），真实JSON与四条核心场景最终通过；真实换餐完整链路仍待诊断，验证预算已耗尽。精确证据/限额见VERIFICATION，HTTPS/微信尚未验收。
