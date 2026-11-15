@@ -77,6 +77,14 @@ class WorkflowTest(unittest.TestCase):
         self.assertEqual(calls,[])
         self.assertEqual(self.owner.get('/api/records').json(),[])
 
+    def test_provider_quantity_in_food_name_is_rejected_without_draft_or_record(self):
+        output=self.extraction()
+        output['items'][0]['food']='半碗米饭'
+        result=self.extract(output)
+        self.assertEqual(result.status_code,502)
+        self.assertEqual(self.owner.get('/api/records').json(),[])
+        self.assertEqual(self.owner.get('/api/proposals').json(),[])
+
     def test_missing_meal_requests_clarification(self):
         r=self.extract(self.extraction(meal=None,questions=['这是哪一餐？']))
         self.assertEqual(r.status_code,200)
