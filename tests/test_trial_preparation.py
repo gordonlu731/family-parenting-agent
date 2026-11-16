@@ -64,6 +64,16 @@ class FakeResponse(io.BytesIO):
 
 
 class HttpsProbeTest(unittest.TestCase):
+    def test_https_only_platform_never_downgrades_tls_or_probes_http(self):
+        def opener(request,timeout):
+            self.assertTrue(request.full_url.startswith('https://'))
+            if request.full_url.endswith('/health'):return FakeResponse(200,{'status':'ok'})
+            if request.full_url.endswith('/config'):return FakeResponse(200,{'demo_mode':False})
+            return FakeResponse(401,{})
+        result=check_https.check('https://family.example.ts.net',opener,require_http_redirect=False)
+        self.assertEqual(result['status'],'ok');self.assertTrue(result['tls_verification'])
+        self.assertFalse(result['http_redirect_checked'])
+
     def test_health_anonymous_and_http_redirect_checks_without_model_call(self):
         urls=[]
         def opener(request,timeout):

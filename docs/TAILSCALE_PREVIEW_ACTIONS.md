@@ -34,9 +34,9 @@ tailscale funnel --bg --https=443 http://127.0.0.1:18080
 tailscale funnel status --json
 ```
 
-只能这一项HTTPS443→现有育儿18080；不用--tcp、不分享文件/目录、不代理其他端口、不修改安全组或sshd，不触碰量化项目。禁止接受CLI可能提出的默认全体成员授权；条件不足直接停止。私密操作包中包含不变性预检和精确节点信息。
+只能这一项HTTPS443→现有育儿18080；不用--tcp、不分享文件/目录、不代理其他端口、不修改安全组或sshd，不触碰量化项目。禁止接受CLI可能提出的默认全体成员授权；条件不足直接停止。私密操作包中包含不变性预检和精确节点信息。管理员须在现有root Workbench审阅该块，并复制为root拥有、700权限的文件再执行，不直接长期依赖family可写的root脚本。操作顺序是预检→以family-dev应用已备份的预览配置→仅开启此映射；开启失败时先撤该映射再恢复应用配置，撤销失败则保持模型禁用并停止。
 
-配置成功后才从真实命令结果取得URL。执行者从服务器外严格CA验证、health、静态页面、匿名导出401、未登录拒绝、邀请/登录Secure/HttpOnly/SameSite和CSRF/Origin；应用model_ready必须false。Funnel未承诺提供HTTP80跳转，不能把普通Caddy探测中的HTTP跳转要求直接套用并因此修改ECS入站。
+配置成功后才从真实命令结果取得URL。执行者从服务器外严格CA验证、health、静态页面、匿名导出401、未登录拒绝、邀请/登录Secure/HttpOnly/SameSite和CSRF/Origin；应用model_ready必须false。使用check_https.py --https-only保留严格CA校验并跳过HTTP80探测；Funnel未承诺HTTP80跳转，不因此修改ECS入站。
 
 ## 撤销和回退
 

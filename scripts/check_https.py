@@ -11,7 +11,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self,*args,**kwargs):return None
 
 
-def check(origin,open_request=None):
+def check(origin,open_request=None,require_http_redirect=True):
     from deploy import https_url
     origin=https_url(origin,True)
     if open_request is None:
@@ -28,17 +28,21 @@ def check(origin,open_request=None):
         if r.status!=200 or value.get('demo_mode') is not False:issues.append('demo_or_config_failed')
     with get(origin+'/api/export') as r:
         if r.status!=401:issues.append('anonymous_export_not_denied')
-    parsed=urllib.parse.urlsplit(origin)
-    with get('http://'+parsed.netloc+'/') as r:
-        location=r.headers.get('Location','')
-        if r.status not in (301,302,307,308) or location.rstrip('/')!=origin:issues.append('http_https_redirect_failed')
+    if require_http_redirect:
+        parsed=urllib.parse.urlsplit(origin)
+        with get('http://'+parsed.netloc+'/') as r:
+            location=r.headers.get('Location','')
+            if r.status not in (301,302,307,308) or location.rstrip('/')!=origin:issues.append('http_https_redirect_failed')
     return {'status':'ok' if not issues else 'failed','issues':issues,'tls_verification':True,
+            'http_redirect_checked':require_http_redirect,
             'login_cookie_and_wechat':'still_requires_authenticated_device_acceptance','model_calls':0}
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--origin',required=True);a=p.parse_args()
-    try:result=check(a.origin)
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--origin',required=True)
+    p.add_argument('--https-only',action='store_true',help='HTTPS-only platforms such as Funnel do not supply an HTTP:80 redirect; TLS verification remains mandatory')
+    a=p.parse_args()
+    try:result=check(a.origin,require_http_redirect=not a.https_only)
     except Exception:result={'status':'failed','issues':['tls_network_or_protocol_failed'],'model_calls':0}
     print(json.dumps(result));return 0 if result['status']=='ok' else 1
 
