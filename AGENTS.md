@@ -1,6 +1,6 @@
 # Family parenting assistant
 
-One household, one child. Current application baseline: 0.3.2. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
+One household, one child. Current application baseline: 0.3.5. Read README.md, docs/STATUS.md, docs/CORE_SCENARIOS.md and docs/HANDOFF.md before changing behavior. docs/ROADMAP.md tracks executable tasks; docs/DECISIONS.md distinguishes confirmed choices from proposals.
 
 ## Development
 
@@ -41,5 +41,13 @@ One household, one child. Current application baseline: 0.3.2. Read README.md, d
 
 - scripts/evaluate.py defaults to a dry run. --mock-model exercises the runner with synthetic replies; only --call-model permits potentially billable calls, capped by --max-calls. It creates isolated fictional databases and never uses the configured production APP_DB. Reports stay private next to the configured database (evaluations/), under ignored data/ locally or outside the source checkout; preserve human-review-pending status.
 - scripts/operations.py backup uses SQLite online backup, private files and checksummed manifests. check is read-only; restore-check restores only to a temporary directory. Retention only prunes validated tool-owned pairs after a successful backup. It does not provide encrypted off-host storage or production restore.
-- Deployment is authorized as of 2026-11-14; the earlier pause is lifted. Read docs/DEPLOYMENT_PLAN.md, use the already connected environment and existing SSH identity, and do not require a new P1/G1 or CI deployment layer. The current chat has not verified ECS access; report actual results. ops/*.example require path/permission checks before activation. Do not send notifications without recipient authorization.
+- Deployment is authorized as of 2026-11-14; the earlier pause is lifted. Read docs/DEPLOYMENT_PLAN.md, use the already connected environment and existing SSH identity, and do not require a new P1/G1 or CI deployment layer. ECS private native-user-service is verified; preserve its existing configuration/database and report current results. ops/*.example require path/permission checks before activation. Do not send notifications without recipient authorization.
 - scripts/deploy.py configure --non-interactive creates a new private .env from selected process variables, with no prompts or network access; never overwrites an existing config or reuses another project identity. Production mode requires an explicit HTTPS origin.
+
+- New non-root user-service fallback: read docs/USER_DEPLOYMENT.md. scripts/user_service.py installs only the current user's unit, keeps private configuration/data and never calls sudo or the host Docker daemon. A successful local/CI check is not ECS deployment evidence. Ordinary project deployment proceeds autonomously once its dedicated SSH identity and system initialization are actually available.
+
+- The owner selected official DeepSeek API for this project. Read docs/DEEPSEEK_SETUP.md; the key is already privately installed and real core cases have passed. Do not ask for it again. The recorded validation request ledger is exhausted (8/8), so continue offline diagnostics without resetting it or making new real validation calls. For api.deepseek.com the shared thinking flag maps to thinking.type (default disabled), never Qwen enable_thinking. Preserve the global live-test budget and existing production configuration/data.
+
+- scripts/evaluate.py now reports named steps and source-relative failure locations. Read docs/OFFLINE_DIAGNOSTICS.md. --replay only uses private captured replies and never constructs a live provider client; missing/mismatched replies must fail without network fallback. --capture-responses is explicit and private, not authorization for new live calls. The original failed response was not retained, so a synthetic/replayed pass cannot certify that historical failure as fixed.
+
+- docs/NEXT_CODEX_TASK.md is the end-to-end delivery contract for a family text trial. Offline diagnostics are one milestone, not the stop condition. Continue independent implementation, verification, deployment and handoff; batch genuine external dependencies only after preparing concrete actions. This does not expand the exhausted validation budget or authorize new paid resources.

@@ -1,6 +1,6 @@
 # 小芽家庭育儿助手
 
-手机网页开发试用版 0.3.2。供一个家庭通过独立身份，共同维护宝宝档案、菜单和实际进食记录。正式目标是微信中打开链接使用；此包尚未部署上线，也未完成微信真机验收。
+手机网页开发试用版 0.3.4（源码待部署，ECS仍0.3.3）。供一个家庭通过独立身份，共同维护宝宝档案、菜单和实际进食记录。已完成ECS私人回环试运行与虚构数据验收，仅127.0.0.1:18080；正式HTTPS和微信真机尚未验收。
 
 ## 项目资料入口
 
@@ -17,9 +17,11 @@
 | 已授权的部署顺序与实际条件 | [DEPLOYMENT_PLAN.md](docs/DEPLOYMENT_PLAN.md) |
 | 实际检查结果与验收缺口 | [VERIFICATION.md](docs/VERIFICATION.md) |
 | 页面回归与可执行模型评测 | [READINESS.md](docs/READINESS.md) |
+| 换餐/两人流程诊断、零网络回放 | [OFFLINE_DIAGNOSTICS.md](docs/OFFLINE_DIAGNOSTICS.md) |
+| 已选DeepSeek官方接口与安全配置 | [DEEPSEEK_SETUP.md](docs/DEEPSEEK_SETUP.md) |
 | 自动备份、监测与升级回滚准备 | [OPERATIONS.md](docs/OPERATIONS.md) |
 
-最近需求：回看历史计划和实际进食，维护全家共享食材，结合反馈推荐菜单，再按家中余量生成采购缺口。历史回看、共享食材、带家庭资料的推荐及采购缺口计算均已有首版实现；桌面/手机尺寸的独立浏览器回归已跑通；真实模型效果与微信体验待验收。 用户已授权开始ECS部署；当前会话尚未挂载已打通环境的SSH身份，实际连接与部署未执行，见DEPLOYMENT_PLAN。
+最近需求：回看历史计划和实际进食，维护全家共享食材，结合反馈推荐菜单，再按家中余量生成采购缺口。历史回看、共享食材、带家庭资料的推荐及采购缺口计算均已有首版实现；桌面/手机尺寸的独立浏览器回归已跑通。ECS已通过专属非root用户服务部署0.3.3（86f3f29），历史菜单复用及用户备份/监测定时任务已启用，虚构数据共享、重启持久化、备份与恢复副本读取已验证；真实模型效果与微信体验待验收，见DEPLOYMENT_PLAN和VERIFICATION。
 
 ## 已实现
 
@@ -166,3 +168,11 @@ docker compose -p family-parenting-agent exec app python scripts/manage.py invit
 | docs/STATUS.md | 当前完成范围与验证限制 |
 
 本项目源码按维护者选择公开在独立仓库，与量化项目分开。数据库、密钥、真实录音和家庭资料不提交Git。
+
+非root原生部署后备路径与边界见[USER_DEPLOYMENT](docs/USER_DEPLOYMENT.md)。
+
+0.3.3新增历史菜单复用和原生用户备份/监测定时工具；发布证据见STATUS，正式试用交接见[交接文档](docs/FAMILY_TRIAL_HANDOFF.md)。
+
+当前服务器已接入DeepSeek官方deepseek-flash（0.3.5/f919554），真实JSON与四条核心场景最终通过；真实换餐完整链路仍待诊断，验证预算已耗尽。精确证据/限额见VERIFICATION，HTTPS/微信尚未验收。
+
+当前总交付仍受域名/HTTPS管理员条件及追加真实验收额度等外部输入阻塞；正式配置与候选已在ECS准备，尚无微信家庭网址。最小操作包见[交付检查点](docs/DELIVERY_CHECKPOINT.md)，不要将私人健康检查当作家庭已上线。

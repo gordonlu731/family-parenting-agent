@@ -163,6 +163,32 @@ def run(output, executable=None):
                             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1')
                             page.locator('.review-day').first.locator('.review-slot').filter(has_text='午餐').scroll_into_view_if_needed()
                             capture(page, output/(name+'-review.png'))
+                            stage = name+':history-reuse'
+                            target_day=(datetime.now(ZoneInfo('Asia/Shanghai')).date()+timedelta(days=1)).isoformat()
+                            source_slot=page.locator('.review-day').first.locator('.review-slot').filter(has_text='QA午餐')
+                            source_slot.get_by_role('button',name='复用这餐菜单',exact=True).click()
+                            dialog=page.get_by_role('dialog')
+                            expect(dialog).to_have_attribute('aria-label','复用历史菜单草稿')
+                            dialog.get_by_label('目标日期',exact=True).fill(target_day)
+                            dialog.get_by_label('目标餐次',exact=True).select_option('晚餐')
+                            dialog.get_by_label('这一餐吃什么',exact=True).fill('复用测试晚餐')
+                            dialog.get_by_role('button',name='保存菜单，全家可见',exact=True).click()
+                            expect(dialog).to_be_visible()  # Required human confirmation blocks publication.
+                            dialog.get_by_label('我已核对目标餐次、宝宝当前档案、配料及处理方式，确认发布这份历史复用菜单。').check()
+                            dialog.get_by_role('button',name='保存菜单，全家可见',exact=True).click()
+                            expect(page.get_by_role('dialog')).to_have_count(0)
+                            target=owner.get('/api/menus',params={'start':target_day,'end':target_day}).json()
+                            assert len(target)==1 and target[0]['title']=='复用测试晚餐'
+                            assert len(owner.get('/api/records').json())==1
+                            expect(source_slot.get_by_text('QA午餐',exact=True)).to_be_visible()
+                            capture(page,output/(name+'-history-reuse.png'))
+                            source_slot.get_by_role('button',name='复用这餐菜单',exact=True).click()
+                            dialog.get_by_label('目标日期',exact=True).fill(target_day)
+                            dialog.get_by_label('目标餐次',exact=True).select_option('晚餐')
+                            dialog.get_by_label('我已核对目标餐次、宝宝当前档案、配料及处理方式，确认发布这份历史复用菜单。').check()
+                            dialog.get_by_role('button',name='保存菜单，全家可见',exact=True).click()
+                            expect(dialog.get_by_role('alert')).to_contain_text('目标餐次已有菜单')
+                            dialog.get_by_role('button',name='关闭',exact=True).click()
                             stage = name+':caregiver-login'
                             invite = owner.post('/api/invites', json={}).json()['path']
                             other_context = browser.new_context(viewport=viewport,locale='zh-CN',timezone_id='Asia/Shanghai')
@@ -176,10 +202,11 @@ def run(output, executable=None):
                             expect(other.get_by_role('heading', name=re.compile('测试照顾者，今天好'))).to_be_visible()
                             other.get_by_role('button', name='回看', exact=True).click()
                             expect(other.locator('.review-day').first.get_by_text('小米粥', exact=True)).to_be_visible()
+                            expect(other.get_by_role('button',name='复用这餐菜单',exact=True)).to_have_count(0)
                             other_context.close()
                             assert not errors, 'JavaScript page errors'
                             context.close()
-                            completed.append({'viewport': name, 'checks': ['pantry','reviewed_menu','shopping_refresh','actual_vs_plan','invite_login_and_reload','shared_records','no_horizontal_overflow'], 'status': 'passed'})
+                            completed.append({'viewport': name, 'checks': ['pantry','reviewed_menu','shopping_refresh','actual_vs_plan','invite_login_and_reload','shared_records','history_reuse_confirmation_and_conflict','caregiver_no_publish','no_horizontal_overflow'], 'status': 'passed'})
         except Exception as exc:
             try:
                 target = other if ':caregiver' in stage else page
@@ -206,6 +233,10 @@ def main():
         result = run(args.output, args.chromium_path)
     except Exception as exc:
         print('Browser checks failed; inspect the synthetic report. Error type: '+type(exc).__name__)
+        report=args.output/'result.json'
+        if report.exists():
+            info=json.loads(report.read_text())
+            print(json.dumps({k:info.get(k) for k in ('stage','error_type','detail')},ensure_ascii=False))
         return 1
     print('Browser checks passed for '+', '.join(i['viewport'] for i in result)+'. Synthetic provider; not WeChat or live-model verification.')
     return 0

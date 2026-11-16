@@ -132,6 +132,58 @@ class DeploymentTest(unittest.TestCase):
         with patch.dict(os.environ,{'MODEL_ID':'qwen-plus','MODEL_ENABLE_THINKING':'false'}):
             self.assertIs(build_body([],True)['enable_thinking'],False)
 
+    def test_deepseek_official_configuration_defaults_to_non_thinking_without_call(self):
+        with tempfile.TemporaryDirectory() as tmp,contextlib.redirect_stdout(io.StringIO()) as output:
+            file=Path(tmp)/'.env'
+            env=deploy.configure_unattended(file,'private',18080,{
+                'MODEL_BASE_URL':'https://api.deepseek.com','MODEL_ID':'deepseek-flash',
+                'MODEL_API_KEY':'sk-synthetic-not-real',
+            })
+            self.assertEqual(env['MODEL_ENABLE_THINKING'],'false')
+            self.assertEqual(env['MODEL_ID'],'deepseek-flash')
+            self.assertNotIn(env['MODEL_API_KEY'],output.getvalue())
+            self.assertFalse((Path(tmp)/'family.sqlite3').exists())
+
+    def test_deepseek_thinking_switch_and_json_payload_do_not_change_other_providers(self):
+        for setting,expected in [('', 'disabled'),('false','disabled'),('true','enabled')]:
+            with self.subTest(setting=setting),patch.dict(os.environ,{
+                'MODEL_BASE_URL':'https://api.deepseek.com','MODEL_ID':'deepseek-flash',
+                'MODEL_ENABLE_THINKING':setting,
+            }):
+                body=build_body([{'role':'user','content':'Return JSON.'}],True,128)
+                self.assertEqual(body['thinking'],{'type':expected})
+                self.assertNotIn('enable_thinking',body)
+                self.assertEqual(body['response_format'],{'type':'json_object'})
+                self.assertEqual(body['max_tokens'],128)
+        with patch.dict(os.environ,{'MODEL_BASE_URL':'https://other.example/v1',
+                                   'MODEL_ID':'deepseek-flash','MODEL_ENABLE_THINKING':'false'}):
+            body=build_body([],True)
+            self.assertNotIn('thinking',body)
+            self.assertIs(body['enable_thinking'],False)
+        with patch.dict(os.environ,{'MODEL_BASE_URL':'https://api.deepseek.com',
+                                   'MODEL_ID':'deepseek-flash','MODEL_ENABLE_THINKING':'invalid'}):
+            with self.assertRaises(ValueError):build_body([],True)
+
+    def test_deepseek_synthetic_json_check_handles_blank_content_without_retry(self):
+        for content,expected in [('{"ok":true}',0),('   ',1)]:
+            requests=[]
+            def handler(request):
+                requests.append(request)
+                return httpx.Response(200,json={'choices':[{'finish_reason':'stop','message':{'content':content}}]})
+            def client(**kwargs):return httpx.Client(transport=httpx.MockTransport(handler),**kwargs)
+            with self.subTest(content=content),patch.dict(os.environ,{
+                'MODEL_API_KEY':'sk-synthetic-not-real','MODEL_ID':'deepseek-flash',
+                'MODEL_BASE_URL':'https://api.deepseek.com','MODEL_ENABLE_THINKING':'false',
+            }),contextlib.redirect_stdout(io.StringIO()) as output:
+                self.assertEqual(check_model.check(client),expected)
+            self.assertEqual(len(requests),1)
+            self.assertEqual(str(requests[0].url),'https://api.deepseek.com/chat/completions')
+            body=json.loads(requests[0].content)
+            self.assertEqual(body['thinking'],{'type':'disabled'})
+            self.assertNotIn('enable_thinking',body)
+            self.assertEqual(body['response_format'],{'type':'json_object'})
+            self.assertNotIn('sk-synthetic-not-real',output.getvalue())
+
     def test_provider_errors_do_not_echo_sensitive_bodies(self):
         for status,expected in [(401,'鉴权'),(403,'鉴权'),(429,'额度'),(400,'配置'),(404,'配置')]:
             response=httpx.Response(status,text='sk-secret-should-never-appear',request=httpx.Request('POST','https://model.example'))
