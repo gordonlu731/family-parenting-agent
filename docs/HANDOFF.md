@@ -1,3 +1,11 @@
+## 2026-11-16 现有Tailscale只读评估结果
+
+当前Tailscale1.104.5/Running、MagicDNS开启，节点DNS名存在；Serve/Funnel配置均为空。CertDomains为空、Self未下发Funnel能力、OperatorUser为空，family-dev不能自行更改daemon/策略。尚无URL，未启用分享或重启应用，真实预算仍8/8。
+
+已准备仅本节点IP的Funnel策略片段、只指向18080的443映射、HTTPS/Secure Cookie且禁用模型的私密配置候选及原配置回退。需要控制台Owner/Admin核实HTTPS Certificates并仅授权本节点；既有root执行精确映射，不给family-dev operator，不用全体成员授权、不改节点标签、不开ECS公网18080。
+
+Funnel官方文档说明接收方可不安装Tailscale，但当前条件不足且国内微信未实测；接入商对本实例临时公网测试方式的适用条件仍需确认，不能将中继作为备案豁免。控制台和管理员最小动作、接入商问题、撤销和私有回退见[TAILSCALE_PREVIEW_ACTIONS](TAILSCALE_PREVIEW_ACTIONS.md)。以上是实机评估及准备，不是测试入口已启用。
+
 # 总交付接续
 
 ## 当前优先选择（2026-11-16）
