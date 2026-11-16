@@ -1,3 +1,7 @@
+## 2026-11-16 总交付执行中
+
+已实机确认0.3.5/f919554健康、Key与8/8账本沿用，旧脚本只返回AssertionError、原回复和栈未留存，无法定位原断言。继续零网络回放及正式家庭/HTTPS可执行准备，不新增真实请求。新增独立正式配置/凭证/候选unit准备工具和严格TLS只读检查；完成后的实机回执与外部最小动作见[DELIVERY_CHECKPOINT](DELIVERY_CHECKPOINT.md)。
+
 # 当前状态
 
 更新：2026年11月16日（Asia/Shanghai）。本次读取GitHub记录核对，未重新登录ECS；实际运行状态依据2026年11月15日Codex部署回执，详见[VERIFICATION](VERIFICATION.md)。旧阶段记录保留在验证历史，不作为当前待办。
