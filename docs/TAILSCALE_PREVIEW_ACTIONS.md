@@ -63,3 +63,14 @@ tailscale funnel --bg --https=443 http://127.0.0.1:18080 off
 - https://tailscale.com/docs/reference/tailscale-cli/funnel （443及精确off撤销，不reset）
 - https://tailscale.com/terms （2.5适用规则）
 - https://help.aliyun.com/zh/icp-filing/basic-icp-service/product-overview/icp-filing-requirements-for-a-regular-website （内地托管、IP及HTTP/HTTPS接入要求；不宣称临时中继豁免）
+
+## 私密操作包位置与审核
+
+既有ECS上的家庭用户私密目录 `.config/family-parenting-agent/temporary-preview/` 已包含：
+
+- node-policy-fragment.json：仅当前节点IP的nodeAttrs片段，合并到原策略，不能替换整份策略。
+- app.env.before / app.env.preview / app-plan.json：600原配置、禁AI候选和哈希；勿输出到聊天。
+- preview-plan.json：实际候选origin、工具SHA、root块SHA与虚构数据摘要等私密元信息。其false状态表示未启用，不能当URL已存在。
+- root-enable-preview.sh：已有root Workbench审阅块；先复制成root拥有700文件并核对私密记录的SHA，再执行。尚未执行。
+
+控制台/接入条件确认后可以一次审阅执行该块，不需要家人安装软件或用户重新配置SSH。执行者随后接手服务器外严格CA与登录测试，最后由用户普通手机网络/微信确认可达性。

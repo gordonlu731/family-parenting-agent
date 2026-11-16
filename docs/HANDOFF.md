@@ -1,3 +1,15 @@
+## 2026-11-16 临时试用评估与准备完成（尚无URL）
+
+已按用户“先试用、不买域名”执行，只使用已核实虚构数据。Tailscale1.104.5/Running、MagicDNS开启，Serve/Funnel均为空；当前HTTPS证书域名和Funnel能力未下发，operator未配置，family-dev无现成配置授权。完整节点/账号信息仅保存在ECS私密目录。
+
+仅准备、未启用：单节点IP的funnel策略片段、实际节点HTTPS origin的600候选配置、原配置备份/哈希、已有root Workbench审阅块和精确撤销命令。候选仅改origin/Secure Cookie并清空模型Key，保留原初始化凭证、数据、身份和限额；当前应用配置未改、未重启，health200。管理员块先验证证书/能力/原空配置及已知虚构业务摘要，不reset、不换节点身份，不授operator；只代理HTTPS443→育儿127.0.0.1:18080。原Key留在600备份，不公开、不删除。
+
+预览工具2027fdc0a4815c88a9b864e7d90d40e007b431b7已暂存到ECS；最终构建和133项测试通过（含候选apply/restore的模拟服务验证及HTTPS-only严格TLS探测），[Verify43866974293](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43866974293)成功。实际apply/restore、Serve/Funnel、控制台、root块均未执行；不能把模拟或bash语法检查称为管理员实机生效。
+
+当前状态仍是“尚无URL”。需要Owner/Admin核实/开启HTTPS Certificates、仅对本节点添加Funnel能力，避免默认全成员授权；需确认内地ECS该临时公开方式的接入条件，并审核执行唯一root映射。具体控制台、接入商问题、操作次序和回退见[TAILSCALE_PREVIEW_ACTIONS](TAILSCALE_PREVIEW_ACTIONS.md)。这个试用不要求买域名，不要求新增模型额度或异机备份配置；长期正式服务事项另记。
+
+若后续Funnel建成，接收方按平台设计不需Tailscale；但国内普通手机网络/微信仍待真实验证。Serve/SSH只属私人回退，不得冒充公开微信分享。本轮未生成公开地址或私发登录邀请；真实模型新增0，账本8/8不变。
+
 ## 2026-11-16 现有Tailscale只读评估结果
 
 当前Tailscale1.104.5/Running、MagicDNS开启，节点DNS名存在；Serve/Funnel配置均为空。CertDomains为空、Self未下发Funnel能力、OperatorUser为空，family-dev不能自行更改daemon/策略。尚无URL，未启用分享或重启应用，真实预算仍8/8。
@@ -18,7 +30,7 @@ Funnel官方文档说明接收方可不安装Tailscale，但当前条件不足�
 
 正式候选私密配置/独立初始化凭证、空正式目录、应用/备份/监测候选unit、原5个unit回退副本已准备在ECS。本项目trial-ready计划文件记录具体位置，不能公开其凭据或把虚构管理员当真家人。域名未定，所以候选仍是private origin；域名确认后保留该凭证，只更新候选origin/cookie并重生成候选，不再次建家。
 
-仅外部条件未满足：新增最多2次Chat的明确授权（原8/8不重置）、域名/DNS/一次HTTPS管理员操作范围、异机存储/加密公钥与恢复保管。具体步骤/止损/回退见DELIVERY_CHECKPOINT。没有这些输入时不要继续付费请求、开公网、买资源、填真实档案。
+长期正式交付仍有外部条件（不阻塞本次零模型虚构试用）：新增最多2次Chat的明确授权（原8/8不重置）、域名/DNS/一次HTTPS管理员操作范围、异机存储/加密公钥与恢复保管。具体步骤/止损/回退见DELIVERY_CHECKPOINT。没有这些输入时不要继续付费请求、开公网、买资源、填真实档案。
 
 取得2次授权后执行新工具p10 --capture-responses --max-calls 2，回复先fsync到私密报告，31具名检查；首个错误停止，无自动重试。单独记录新授权额度和旧账本的关联，不能直接绕开旧worker的预算守卫。HTTP200不等于业务通过。
 

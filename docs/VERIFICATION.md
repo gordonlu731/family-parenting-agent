@@ -1,3 +1,13 @@
+## 2026-11-16 Tailscale临时预览实际检查
+
+- 同步4e10a41并读取TEMPORARY_PREVIEW，沿用0.3.5/f919554、专属SSH、已配置Key、虚构库和timer。只读核实Tailscale1.104.5/Running、MagicDNS开启、Self DNS存在，Serve/Funnel空，CertDomains空、无Funnel能力；只提取operator元信息（未配置），未输出pref或账户/peer清单。原始status等600保留在家庭用户700私密目录，不提交Git。
+- 核对当前CLI精确命令及Tailscale官方Funnel/目标选择器/撤销/条款和阿里云接入说明。IP可作为nodeAttr target，方案只选本节点，不默认autogroup:member，不改节点标签/ACL/SSH/安全组。不能把临时平台域名解释为内地服务器公网发布条件豁免。
+- preview_config.py仅生成候选，origin从本节点DNS推导，不声称是已建入口。候选.env和原备份600，保留非目标字段，模型Key留空阻止后续试用触发收费。原运行.env字节未变、health200，账本仍8/8，数据摘要与已知虚构验收基线一致。
+- 私密策略片段、root-enable-preview.sh及预览计划已生成，root块bash -n通过；包含同一节点/HTTPS/能力/空Serve配置/虚构库摘要的先验检查，按family-dev应用候选后只启HTTPS443→18080，失败先撤映射再恢复配置。不reset；root块未执行，控制台未动，没有授予operator。
+- 工具固定2027fdc0a4815c88a9b864e7d90d40e007b431b7已暂存ECS，应用仍f919554。先前132项ECS测试因未构建跳过静态页1项；最终完成构建后133项全部通过，无跳过。preview候选prepare、模拟apply/restore、并发编辑拒绝、Key清空和字段保留通过；HTTPS-only检查保留系统CA验证，跳过平台不提供的HTTP80重定向。没有实际公网TLS探测或新模型请求。
+- [Verify43866974293](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43866974293)对应最终工具提交，build/browser/container成功；浏览器仍为合成ASGI检查，不能代签公网或微信。
+- 尚无URL，家人普通网络/微信可达性未测。实际待用户动作仅当前试用的控制台/接入适用条件和root精确映射；不索要Key、不要求买域名、不申请新模型额度或云资源。回退和操作包见TAILSCALE_PREVIEW_ACTIONS。
+
 ## 2026-11-16 现有Tailscale只读评估结果
 
 当前Tailscale1.104.5/Running、MagicDNS开启，节点DNS名存在；Serve/Funnel配置均为空。CertDomains为空、Self未下发Funnel能力、OperatorUser为空，family-dev不能自行更改daemon/策略。尚无URL，未启用分享或重启应用，真实预算仍8/8。
