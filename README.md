@@ -174,3 +174,5 @@ docker compose -p family-parenting-agent exec app python scripts/manage.py invit
 0.3.3新增历史菜单复用和原生用户备份/监测定时工具；发布证据见STATUS，正式试用交接见[交接文档](docs/FAMILY_TRIAL_HANDOFF.md)。
 
 当前服务器已接入DeepSeek官方deepseek-flash（0.3.5/f919554），真实JSON与四条核心场景最终通过；真实换餐完整链路仍待诊断，验证预算已耗尽。精确证据/限额见VERIFICATION，HTTPS/微信尚未验收。
+
+当前总交付仍受域名/HTTPS管理员条件及追加真实验收额度等外部输入阻塞；正式配置与候选已在ECS准备，尚无微信家庭网址。最小操作包见[交付检查点](docs/DELIVERY_CHECKPOINT.md)，不要将私人健康检查当作家庭已上线。

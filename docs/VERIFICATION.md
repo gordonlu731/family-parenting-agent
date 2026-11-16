@@ -1,3 +1,19 @@
+## 2026-11-16 总交付实机执行回执
+
+- 同步3a17f3e后继续总任务；当前工具固定f306a2643e6ee8a2b3eabc4a1978712750373888，已传至ECS独立目录并校验SHA256。应用仍0.3.5/f919554，health200、active；backend/frontend源文件逐项相同，不因纯工具变化重启健康应用。main a3f9d43，PR #1保持Draft。
+- 已读取旧deepseek-live-worker-v2、离线脚本和私密摘要；旧except只输出AssertionError，没有traceback/具名阶段，原回复未留存。原报告缺provider_replies，新工具正确拒绝将其当捕获回复。故原真实失败不可定位，未声称已修复。
+- ECS构建和130项合成测试通过；[Verify43817944551](https://github.com/gordonlu731/family-parenting-agent/actions/runs/43817944551) build-and-test/browser/container均success。新增5项覆盖正式准备不轮换身份/不建家/不改原配置/非空拒绝、域名注入拒绝、HTTPS跳转与匿名拒绝探测。普通测试不调用实供。
+- ECS全30条mock通过（provider_calls0），全部离线回放30/30通过（provider_calls0、replay_calls22）。p10具名31步骤覆盖共享、照护者买后总量、实际身份、私人替换草稿、确认、保留晚餐/实际/库存与采购只读；模型空白/截断/故障、幂等/冲突/旧草稿等由合成回归覆盖。不是新实供或微信验收。
+- 保存成功m01中的午餐作为初始菜单，将早餐映射为午餐替代，显式生成reconstructed_fixture，再开启日期平移作p10回放，1/1通过、2回复复放、provider_calls0。旧源文件摘要保持一致。这是合成封装/映射后的重建夹具，不是原失败回复，不能关闭原真实待验项。
+- 现有库业务摘要仍与已知虚构验收基线相同，才执行正式准备。实际创建独立新BOOTSTRAP_TOKEN、复制项目模型配置到新600私密.env，正式目录及备份目录700且无DB。候选origin仍回环（域名未定），未初始化/未切换/未写真实档案。模型Key与凭证未回传Git。
+- 正式应用unit和4个用户备份/监测候选已生成，真实systemd-analyze --user verify通过；当前5个unit另存600回退副本。候选未安装，原服务ExecMainStartTimestamp仍为11月15日23:55，未被准备工具重启。
+- 当前库在线备份keep365（本次不清理旧备份）、校验/临时隔离恢复/check通过。每日备份和每小时监测timer继续启用；11月16日03:18定时备份、当日14:08监测触发可见，backup/check均Result=success、ExecMainStatus0。它们仍是本机明文，不是异机灾备。
+- 原真实预算ledger仍total_requests8、chat_attempts7；本轮新增供应商请求0，未重置。新工具不构造live客户端的回放边界由测试实证；未调用/models或check_model。
+- 只读实机检查无活动caddy/nginx/apache、无443监听；无确定域名/DNS所有权或本站点管理员公网范围，故未生成假公开URL或修改系统。严格TLS/健康/HTTP跳转/禁演示/匿名导出探测工具已准备，但真实证书/HTTPS/微信检查未运行。先前成功浏览器job为临时ASGI桥接，不能冒充HTTPS真机。
+- 公开仓库只记录去敏结果；私密报告/正式计划/候选和回退材料留ECS。外部最小操作及可回退切换步骤已落地DELIVERY_CHECKPOINT，正式家长档案/私密凭证交付与两机微信步骤已列出。
+
+仍需一次明确最多2次Chat额度、实际域名/DNS和HTTPS管理员范围、家庭专属异机加密存储条件；之后才可完成真实换餐、公共HTTPS、正式启用和家长真机验收。当前收尾状态为“外部条件阻塞”，不是总目标已完成。
+
 ## 2026-11-16 总交付执行中
 
 已实机确认0.3.5/f919554健康、Key与8/8账本沿用，旧脚本只返回AssertionError、原回复和栈未留存，无法定位原断言。继续零网络回放及正式家庭/HTTPS可执行准备，不新增真实请求。新增独立正式配置/凭证/候选unit准备工具和严格TLS只读检查；完成后的实机回执与外部最小动作见[DELIVERY_CHECKPOINT](DELIVERY_CHECKPOINT.md)。
